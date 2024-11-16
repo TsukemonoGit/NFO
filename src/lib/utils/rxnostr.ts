@@ -8,7 +8,7 @@ import { Subject } from 'rxjs';
 
 const rxNostr = createRxNostr({
 	verifier: get(verifier) ?? cryptoVerifier,
-	eoseTimeout: 15000
+	eoseTimeout: 20000
 });
 
 const flushes$ = new Subject<void>();
