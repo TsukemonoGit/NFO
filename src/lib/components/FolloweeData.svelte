@@ -24,6 +24,7 @@
 
 	$effect(() => {
 		if ($kind3Events) {
+			$loading = true;
 			$kind3Events.forEach((ev) => {
 				const isMutualFollow = ev.tags.some((tag) => tag[0] === 'p' && tag[1] === user);
 				followStateMap.update((map) => {
@@ -31,6 +32,7 @@
 					return map; // Don't forget to return the updated map!
 				});
 			});
+			$loading = false;
 		}
 	});
 	$effect(() => {
@@ -38,14 +40,15 @@
 			kind3Events.set([]);
 			kind0Events.set([]);
 			kind1Events.set([]);
+			followStateMap.set(new Map());
 			return;
 		}
-
+		$loading = true;
 		// kind3 のフィルターを作成しイベントを取得
 		const kind3Filters = followList.map((pub) => {
 			return { authors: [pub], kinds: [3], until: now(), limit: 1 };
 		});
-		$loading = true;
+
 		getRxEvents({ filters: kind3Filters })
 			.then((events) => {
 				kind3Events.set(events);

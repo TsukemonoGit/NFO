@@ -1,3 +1,5 @@
+import type { EventPacket } from 'rx-nostr';
+
 export function datetime(unixtime: number) {
 	const time = new Date(unixtime * 1000);
 
@@ -75,4 +77,13 @@ export function formatRelativeDate(unixTime: number, locale: string | null | und
 	} else {
 		return `${years} ${msg.years}`;
 	}
+}
+
+export function sortEventPackets<A extends EventPacket>(events: A[]): A[] {
+	return events.sort((a: A, b: A): number => {
+		if (a.event.created_at !== b.event.created_at) {
+			return b.event.created_at - a.event.created_at;
+		}
+		return a.event.id.localeCompare(b.event.id);
+	});
 }

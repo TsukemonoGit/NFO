@@ -7,6 +7,7 @@
 	import { getRxEvent, set10002DefaultRelay } from '$lib/utils/rxnostr';
 	import { hexRegex } from '$lib/utils/regex';
 	import FolloweeData from './FolloweeData.svelte';
+	import { loading } from '$lib/store/store';
 
 	let {
 		user
@@ -23,7 +24,7 @@
 	]);
 	onMount(async () => {
 		//デフォリレーを取る
-
+		$loading = true;
 		const kind10002 = await getEvent({
 			filters: kind10002filters,
 			relays: kind10002Relay,
@@ -32,6 +33,7 @@
 		console.log(kind10002);
 		if (!kind10002) {
 			//error
+			$loading = false;
 			return;
 		}
 
@@ -43,6 +45,7 @@
 		console.log(kind3);
 		if (!kind3) {
 			//error
+			$loading = false;
 			return;
 		}
 		kind3Event = kind3;
@@ -54,6 +57,7 @@
 					.map((tag) => tag[1])
 			: []
 	);
+	$loading = false;
 </script>
 
 {#if !kind3Event}
