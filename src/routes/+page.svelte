@@ -1,9 +1,11 @@
 <script lang="ts">
-	import SignerConnector from '$lib/components/SignerConnector.svelte';
 	import { loading, signer } from '$lib/store/store';
 	import { Modal, Button, uiHelpers, Input } from 'svelte-5-ui-lib';
 	import { nip19 } from 'nostr-tools';
 	import { LOGIN } from '$lib/store/constants';
+	import { npubRegex } from '$lib/utils/regex';
+	import FollowList from '$lib/components/FollowList.svelte';
+	import SignerConnector from '$lib/components/Signer/GetPublickey/SignerConnector.svelte';
 
 	const modalExample = uiHelpers();
 	let modalStatus = $state(false);
@@ -37,6 +39,18 @@
 			$loading = false;
 		}
 	};
+
+	const toHex = (npub: string | undefined): string | undefined => {
+		if (npub && npubRegex.test(npub)) {
+			try {
+				return nip19.decode(npub).data as string;
+			} catch (error) {
+				console.log(error);
+			}
+		}
+	};
+
+	const hexPub = $derived(toHex(encodedPub));
 </script>
 
 <svelte:head>
@@ -44,19 +58,21 @@
 	<meta name="description" content="Svelte demo app" />
 </svelte:head>
 
-<Button
-	onclick={() => {
-		$signer = undefined;
+<section class="gap-2">
+	<Button
+		onclick={() => {
+			$signer = undefined;
 
-		localStorage.removeItem(LOGIN);
-	}}>Clear Signer</Button
->
-
-<section>
+			localStorage.removeItem(LOGIN);
+		}}>Clear Signer</Button
+	>
 	<div class="flex">
 		<Input bind:value={encodedPub} placeholder="npub~~~" />
 		<Button onclick={() => onClickGetPubkey()}>Get publickey</Button>
 	</div>
+	{#if hexPub}
+		<FollowList user={hexPub} />
+	{/if}
 </section>
 <Modal title="Select Signer" {modalStatus} {closeModal}>
 	<SignerConnector {closeModal} />
@@ -66,7 +82,7 @@
 	section {
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
+
 		align-items: center;
 		flex: 0.6;
 	}

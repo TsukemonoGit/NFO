@@ -2,7 +2,7 @@
 	import Header from './Header.svelte';
 	import '../app.css';
 	import { LOGIN } from '$lib/store/constants';
-	import { loading, signer } from '$lib/store/store';
+	import { loading, signer, verifier } from '$lib/store/store';
 	import {
 		Nip07ExtensionSigner,
 		type Nip07Extension,
@@ -10,10 +10,28 @@
 	} from 'nostr-signer-connector';
 	import { onMount } from 'svelte';
 	import { Spinner } from 'svelte-5-ui-lib';
-
+	import workerUrl from '$lib/worker?worker&url';
 	import type { LoginData } from '../types/types';
+	import { browser } from '$app/environment';
+	import {
+		createNoopClient,
+		createVerificationServiceClient,
+		type VerificationServiceClient
+	} from 'rx-nostr-crypto';
 
 	let { children } = $props();
+
+	//https://github.com/penpenpng/rx-nostr/pull/138
+	const verificationClient: void | VerificationServiceClient = browser
+		? createVerificationServiceClient({
+				worker: new Worker(workerUrl, { type: 'module' }),
+				timeout: 600000
+			})
+		: createNoopClient();
+	if (verificationClient) {
+		verificationClient.start();
+		$verifier = verificationClient.verifier;
+	}
 
 	onMount(async () => {
 		const localData = localStorage.getItem(LOGIN);
