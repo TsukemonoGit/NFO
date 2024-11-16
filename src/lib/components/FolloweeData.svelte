@@ -5,6 +5,7 @@
 	import { writable } from 'svelte/store';
 	import { loading } from '$lib/store/store';
 	import { Button, Select } from 'svelte-5-ui-lib';
+	import { now } from 'rx-nostr';
 	interface SortType {
 		value: string;
 		name: string;
@@ -42,7 +43,7 @@
 
 		// kind3 のフィルターを作成しイベントを取得
 		const kind3Filters = followList.map((pub) => {
-			return { authors: [pub], kinds: [3], limit: 1 };
+			return { authors: [pub], kinds: [3], until: now(), limit: 1 };
 		});
 		$loading = true;
 		getRxEvents({ filters: kind3Filters })
@@ -56,7 +57,7 @@
 
 		// kind0 のフィルターを作成しイベントを取得
 		const kind0Filters = followList.map((pub) => {
-			return { authors: [pub], kinds: [0], limit: 1 };
+			return { authors: [pub], kinds: [0], until: now(), limit: 1 };
 		});
 
 		//[{ authors: followList, kinds: [0] }];
@@ -69,7 +70,7 @@
 			});
 
 		const kind1Filters = followList.map((pub) => {
-			return { authors: [pub], kinds: [1], limit: 1 };
+			return { authors: [pub], kinds: [1], until: now(), limit: 1 };
 		});
 		getRxEvents({ filters: kind1Filters })
 			.then((events) => {

@@ -1,14 +1,14 @@
 import { kind3Relay } from '$lib/store/constants';
 import { verifier } from '$lib/store/store';
 import * as Nostr from 'nostr-tools';
-import { createRxBackwardReq, createRxNostr, latest, latestEach, uniq } from 'rx-nostr';
+import { chunk, createRxBackwardReq, createRxNostr, latest, latestEach, uniq } from 'rx-nostr';
 import { verifier as cryptoVerifier } from 'rx-nostr-crypto';
 import { get } from 'svelte/store';
 import { Subject } from 'rxjs';
 
 const rxNostr = createRxNostr({
 	verifier: get(verifier) ?? cryptoVerifier,
-	eoseTimeout: 4000
+	eoseTimeout: 15000
 });
 
 const flushes$ = new Subject<void>();
@@ -28,12 +28,26 @@ export async function getRxEvent({
 }): Promise<Nostr.Event | undefined> {
 	flushes$.next();
 	const rxReq = createRxBackwardReq();
+	const chunkedReq = rxReq.pipe(
+		chunk(
+			(filters) => filters.length > 100,
+			(filters) => {
+				const pile = [...filters];
+				const chunks = [];
 
+				while (pile.length > 0) {
+					chunks.push(pile.splice(0, 100));
+				}
+
+				return chunks;
+			}
+		)
+	);
 	return new Promise((resolve, reject) => {
 		let event: Nostr.Event | undefined;
 
 		rxNostr
-			.use(rxReq)
+			.use(chunkedReq)
 			.pipe(uniq(flushes$), latest())
 			.subscribe({
 				next: (packet) => {
