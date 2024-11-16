@@ -89,7 +89,7 @@
 	let sortSelected: string | undefined = $state();
 	const sortType: SortType[] = [
 		{ value: 'default', name: 'フォロー順' },
-		{ value: 'note', name: 'ノート順' },
+		{ value: 'note', name: '最終投稿順' },
 		{ value: 'followStatus', name: '相互状態順' }
 	];
 	let ascending = $state(false);
@@ -145,7 +145,7 @@
 		{#each sortedFollowList as pubkey}
 			{@const kind0 = $kind0Events.find((ev) => ev.pubkey === pubkey)}
 			{@const kind1 = $kind1Events.find((ev) => ev.pubkey === pubkey)}
-			<li class="my-1 whitespace-pre-wrap break-words" style="word-break: break-word;">
+			<li>
 				<User {user} {pubkey} {kind0} isFollower={$followStateMap.get(pubkey)} {kind1} />
 			</li>
 		{/each}

@@ -25,12 +25,13 @@
 
 <div class="grid grid-cols-[auto_1fr]">
 	<div class="m-1 h-16 w-16 overflow-hidden rounded-lg">
-		<img
-			src={profile?.picture}
-			alt="Avatar"
-			class=" overflow-hidden object-cover"
-			style=" object-fit: cover; object-position: center;"
-		/>
+		{#if profile?.picture && profile?.picture !== ''}
+			<img
+				src={profile?.picture}
+				alt="Avatar"
+				class=" overflow-hidden object-cover"
+				style=" object-fit: cover; object-position: center;"
+			/>{/if}
 	</div>
 	<div class="flex flex-col">
 		<div class=" text-secondary-600">
@@ -39,14 +40,15 @@
 				{#if isFollower}🫂{:else if isFollower === false}😟{:else}🤔{/if}
 			</div>
 		</div>
-		{#if kind1}
-			<div class="font-bold">
+		{#if kind1}<div class="font-bold">
 				latest note at
 				<time class=" inline-flex" datetime={datetime(kind1.created_at)}
 					>{formatAbsoluteDate(kind1.created_at)}</time
 				>
 				( {formatRelativeDate(kind1.created_at, 'ja')} )
 			</div>
-			{kind1.content}{/if}
+			<div class="my-1 whitespace-pre-wrap break-words" style="word-break: break-word;">
+				{kind1.content}
+			</div>{/if}
 	</div>
 </div>
