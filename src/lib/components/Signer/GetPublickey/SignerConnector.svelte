@@ -25,17 +25,20 @@
 			if (saveSigner) {
 				localStorage.setItem(LOGIN, JSON.stringify({ type: 'nip07' }));
 			}
+
 			closeModal();
 		}
 		console.log('signer:', type);
 	};
 </script>
 
-{#each loginType as type, index}
-	<Button onclick={() => handleClickType(type)}>
-		{type}
-	</Button>
-{/each}
+<div class="flex gap-2">
+	{#each loginType as type, index}
+		<Button onclick={() => handleClickType(type)}>
+			{type}
+		</Button>
+	{/each}
+</div>
 <!-- {#if selectType === 'nip07'}
 	<LoginNip07 /> -->
 {#if selectType === 'nip49'}

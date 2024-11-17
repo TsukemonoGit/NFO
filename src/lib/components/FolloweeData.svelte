@@ -77,7 +77,7 @@
 
 <div>
 	フォロー人数： {followList.length} 相互:{followList.filter((pub) => $followStateMap.get(pub))
-		.length} 片思い:{followList.filter((pub) => !$followStateMap.get(pub)).length}
+		.length} 片思い:{followList.filter((pub) => $followStateMap.get(pub) === false).length}
 </div>
 <div class="flex">
 	<Select id="sort" bind:value={sortSelected} placeholder="sort">

@@ -116,7 +116,7 @@
 	</div>
 	<div>
 		<div class="flex items-start justify-center">
-			<Button onclick={dropdown.toggle} pill={true} class="!p-2" color="secondary"
+			<Button onclick={dropdown.toggle} pill={true} class="m-1 !p-2" color="secondary"
 				><DotsVerticalOutline class="dots-menu cursor-pointer dark:text-white" /></Button
 			>
 			<div class="relative">

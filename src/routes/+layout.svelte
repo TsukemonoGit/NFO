@@ -18,6 +18,7 @@
 		createVerificationServiceClient,
 		type VerificationServiceClient
 	} from 'rx-nostr-crypto';
+	import { SvelteToast } from '@zerodevx/svelte-toast';
 
 	let { children } = $props();
 
@@ -68,6 +69,7 @@
 {#if $loading}
 	<Spinner size="16" class=" fixed bottom-5 right-5" />
 {/if}
+<SvelteToast />
 
 <style>
 	.app {

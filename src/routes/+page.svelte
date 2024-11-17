@@ -6,6 +6,7 @@
 	import { npubRegex } from '$lib/utils/regex';
 	import FollowList from '$lib/components/FollowList.svelte';
 	import SignerConnector from '$lib/components/Signer/GetPublickey/SignerConnector.svelte';
+	import { toast } from '@zerodevx/svelte-toast';
 
 	const modalExample = uiHelpers();
 	let modalStatus = $state(false);
@@ -34,6 +35,13 @@
 				encodedPub = nip19.npubEncode(hexPublicKey);
 			} catch (error) {
 				console.log(error);
+				toast.push('failed to set signer', {
+					theme: {
+						'--toastBackground': ' rgba(255, 60, 0, 0.8)',
+						'--toastBarHeight': 0
+					}
+				});
+				$signer = undefined;
 			}
 
 			$loading = false;
@@ -65,10 +73,15 @@
 			$signer = undefined;
 
 			localStorage.removeItem(LOGIN);
+			toast.push('Signer is cleared', {
+				theme: {
+					'--toastBarHeight': 0
+				}
+			});
 		}}>Clear Signer</Button
 	>
 	<div class="flex">
-		<Input bind:value={encodedPub} placeholder="npub~~~" />
+		<Input bind:value={encodedPub} placeholder="npub..." />
 		<Button onclick={() => onClickGetPubkey()}>Get publickey</Button>
 	</div>
 	{#if hexPub}

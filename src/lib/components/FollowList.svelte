@@ -18,7 +18,7 @@
 	import { Modal, uiHelpers } from 'svelte-5-ui-lib';
 	import SignerConnector from './Signer/GetPublickey/SignerConnector.svelte';
 	import { writable } from 'svelte/store';
-
+	import { toast } from '@zerodevx/svelte-toast';
 	let {
 		user
 	}: {
@@ -162,8 +162,12 @@
 				$newKind3Signed = signedEvent;
 				const { event: resEvent, res } = await promisePublishSignedEvent(signedEvent);
 				console.log(res);
-				const isSuccessRelays: OkPacketAgainstEvent[] = res.filter((item) => item.ok);
-
+				const isSuccessRelays: string[] = res.filter((item) => item.ok).map((item) => item.from);
+				toast.push(`<strong>Success</strong><br>${isSuccessRelays.join('<br>')}`, {
+					theme: {
+						'--toastBarHeight': 0
+					}
+				});
 				if (isSuccessRelays.length > 0) {
 					kind3Event = resEvent;
 
@@ -174,6 +178,12 @@
 				}
 			} catch (error) {
 				console.error('Error during signing:', error);
+				toast.push('Error during signing', {
+					theme: {
+						'--toastBackground': ' rgba(255, 60, 0, 0.8)',
+						'--toastBarHeight': 0
+					}
+				});
 			} finally {
 				$loading = false;
 				console.log('Signed event:', $newKind3Signed);
