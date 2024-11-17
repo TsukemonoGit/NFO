@@ -2,7 +2,6 @@ import type { Nip07ExtensionSigner, Nip46RemoteSigner } from 'nostr-signer-conne
 import type { EventVerifier } from 'rx-nostr';
 import { writable, type Writable } from 'svelte/store';
 import * as Nostr from 'nostr-tools';
-import type { alertColor } from 'svelte-5-ui-lib';
 
 export const signer: Writable<Nip07ExtensionSigner | Nip46RemoteSigner | undefined> = writable();
 

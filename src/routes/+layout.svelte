@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Header from './Header.svelte';
 	import '../app.css';
 	import { LOGIN } from '$lib/store/constants';
 	import { loading, signer, verifier } from '$lib/store/store';
@@ -54,8 +53,6 @@
 </script>
 
 <div class="app">
-	<Header />
-
 	<main>
 		{@render children()}
 	</main>
