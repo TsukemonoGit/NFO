@@ -12,7 +12,7 @@ import {
 } from 'rx-nostr';
 import { verifier as cryptoVerifier } from 'rx-nostr-crypto';
 import { get } from 'svelte/store';
-import { scan, Subject, type OperatorFunction } from 'rxjs';
+import { Observable, scan, Subject, type OperatorFunction } from 'rxjs';
 import { sortEventPackets } from './util';
 
 const rxNostr = createRxNostr({
@@ -116,6 +116,54 @@ export async function getRxEvents({
 		// Emit the filters and finish the request
 		rxReq.emit(filters);
 		rxReq.over();
+	});
+}
+
+export function getRxEventsAsStream({
+	filters
+}: {
+	filters: Nostr.Filter[];
+}): Observable<Nostr.Event[]> {
+	return new Observable<Nostr.Event[]>((subscriber) => {
+		const rxReq = createRxBackwardReq();
+		const chunkedReq = rxReq.pipe(
+			chunk(
+				(filters) => filters.length > filterLen,
+				(filters) => {
+					const pile = [...filters];
+					const chunks = [];
+
+					while (pile.length > 0) {
+						chunks.push(pile.splice(0, filterLen));
+					}
+
+					return chunks;
+				}
+			)
+		);
+		rxNostr
+			.use(rxReq)
+			.pipe(
+				uniq(flushes$),
+				latestEach(({ event }) => event.pubkey),
+				scanArray()
+			)
+			.subscribe({
+				next: (packets: EventPacket[]) => {
+					subscriber.next(packets.map((pk) => pk.event));
+				},
+				error: (err) => subscriber.error(err),
+				complete: () => subscriber.complete()
+			});
+
+		// Emit filters to initiate the request
+		rxReq.emit(filters);
+		rxReq.over();
+
+		// Cleanup logic
+		return () => {
+			// rxReq.cancel(); // 必要ならキャンセル処理を追加
+		};
 	});
 }
 
