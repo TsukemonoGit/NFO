@@ -1,12 +1,13 @@
 <script lang="ts">
-	import { loading, signer } from '$lib/store/store';
-	import { Modal, Button, uiHelpers, Input } from 'svelte-5-ui-lib';
+	import { dontCheckFollowState, loading, signer } from '$lib/store/store';
+	import { Modal, Button, uiHelpers, Input, Checkbox } from 'svelte-5-ui-lib';
 	import { nip19 } from 'nostr-tools';
 	import { LOGIN } from '$lib/store/constants';
 	import { npubRegex } from '$lib/utils/regex';
 	import FollowList from '$lib/components/FollowList.svelte';
-	import SignerConnector from '$lib/components/Signer/GetPublickey/SignerConnector.svelte';
+	import SignerConnector from '$lib/components/Signer/SignerConnector.svelte';
 	import { toast } from '@zerodevx/svelte-toast';
+	import { _ } from 'svelte-i18n';
 
 	const modalExample = uiHelpers();
 	let modalStatus = $state(false);
@@ -63,27 +64,42 @@
 </script>
 
 <svelte:head>
-	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
+	<title>Nostr Follow Organizer</title>
+	<meta
+		name="description"
+		content="A tool to help you keep your Nostr follow list clean and well-organized."
+	/>
 </svelte:head>
-
-<section class="gap-2">
-	<Button
-		onclick={() => {
-			$signer = undefined;
-
-			localStorage.removeItem(LOGIN);
-			toast.push('Signer is cleared', {
-				theme: {
-					'--toastBarHeight': 0
-				}
-			});
-		}}>Clear Signer</Button
-	>
-	<div class="flex">
+<div class="container">
+	<h1>Nostr Follow Organizer</h1>
+	<p class="break-words">{$_('description')}</p>
+</div>
+<section class="container my-4 gap-2">
+	<div class="flex gap-2">
 		<Input bind:value={encodedPub} placeholder="npub..." />
-		<Button onclick={() => onClickGetPubkey()}>Get publickey</Button>
+		<Button onclick={() => onClickGetPubkey()}>Get Publickey</Button><Button
+			color="secondary"
+			onclick={() => {
+				$signer = undefined;
+
+				localStorage.removeItem(LOGIN);
+				toast.push('Signer is cleared', {
+					theme: {
+						'--toastBarHeight': 0
+					}
+				});
+			}}>Clear Signer</Button
+		>
 	</div>
+	<div class=" flex items-center gap-2">
+		<div class=" font-bold">Option:</div>
+		<div class=" m-1">
+			<Checkbox class="my-auto" classLabel="flex items-center " bind:checked={$dontCheckFollowState}
+				>{$_('dontCheckFollowState')}</Checkbox
+			>
+		</div>
+	</div>
+
 	{#if hexPub}
 		<FollowList user={hexPub} />
 	{/if}
@@ -92,7 +108,7 @@
 	<SignerConnector {closeModal} />
 </Modal>
 
-<style>
+<!-- <style>
 	section {
 		display: flex;
 		flex-direction: column;
@@ -100,4 +116,4 @@
 		align-items: center;
 		flex: 0.6;
 	}
-</style>
+</style> -->

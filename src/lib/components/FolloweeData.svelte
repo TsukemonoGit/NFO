@@ -3,10 +3,13 @@
 
 	import { getUserEvents } from '$lib/utils/rxnostr';
 
-	import { followStateMap, kind0Events, kind1Events } from '$lib/store/store';
+	import { dontCheckFollowState, followStateMap, kind0Events, kind1Events } from '$lib/store/store';
 	import { Button, Select } from 'svelte-5-ui-lib';
 
 	import { onMount } from 'svelte';
+	import { CaretUpSolid, CaretDownSolid } from 'flowbite-svelte-icons';
+	import { _ } from 'svelte-i18n';
+
 	interface SortType {
 		value: string;
 		name: string;
@@ -32,10 +35,12 @@
 	let sortedFollowList = $state<string[]>(followList);
 	let sortSelected: string | undefined = $state('default');
 	const sortType: SortType[] = [
-		{ value: 'default', name: 'フォローリスト順' },
-		{ value: 'note', name: '最終投稿順' },
-		{ value: 'followStatus', name: '相互状態順' }
+		{ value: 'default', name: $_('sortType.default') },
+		{ value: 'note', name: $_('sortType.note') }
 	];
+	if (!$dontCheckFollowState) {
+		sortType.push({ value: 'followStatus', name: $_('sortType.followStatus') });
+	}
 	let ascending = $state(false);
 
 	$effect(() => {
@@ -75,37 +80,47 @@
 	});
 </script>
 
-<div>
-	フォロー人数： {followList.length} 相互:{followList.filter((pub) => $followStateMap.get(pub))
-		.length} 片思い:{followList.filter((pub) => $followStateMap.get(pub) === false).length}
+<div class="mt-4 rounded-md border border-secondary-500 p-2">
+	<div class="flex items-center justify-between">
+		<div>
+			{$_('followCount')}： {followList.length}
+			{#if !$dontCheckFollowState}{$_('mutualFollow')}相互:{followList.filter((pub) =>
+					$followStateMap.get(pub)
+				).length}
+				{$_('UnilateralFollow')}:{followList.filter((pub) => $followStateMap.get(pub) === false)
+					.length}{/if}
+		</div>
+		<div class="flex">
+			<Select id="sort" bind:value={sortSelected} placeholder="sort">
+				{#each sortType as { value, name }}
+					<option {value}>{name}</option>
+				{/each}
+			</Select><Button pill color="light" class="w-[42px]" onclick={() => (ascending = !ascending)}
+				>{#if ascending}<CaretUpSolid />
+				{:else}
+					<CaretDownSolid />{/if}</Button
+			>
+		</div>
+	</div>
+	{#if sortedFollowList}
+		<ul class="w-full divide-y divide-secondary-200 overflow-x-hidden">
+			{#each sortedFollowList as pubkey}
+				<li>
+					<User
+						{handleDelete}
+						{user}
+						{pubkey}
+						kind0={$kind0Events.find((ev) => ev.pubkey === pubkey)}
+						isFollower={$followStateMap.get(pubkey)}
+						kind1={$kind1Events.find((ev) => ev.pubkey === pubkey)}
+					/>
+				</li>
+			{/each}
+		</ul>{/if}
 </div>
-<div class="flex">
-	<Select id="sort" bind:value={sortSelected} placeholder="sort">
-		{#each sortType as { value, name }}
-			<option {value}>{name}</option>
-		{/each}
-	</Select><Button color="light" onclick={() => (ascending = !ascending)}
-		>{ascending ? '▲' : '▼'}</Button
-	>
-</div>
-{#if sortedFollowList}
-	<ul class="w-full divide-y divide-primary-500 overflow-x-hidden">
-		{#each sortedFollowList as pubkey}
-			<li>
-				<User
-					{handleDelete}
-					{user}
-					{pubkey}
-					kind0={$kind0Events.find((ev) => ev.pubkey === pubkey)}
-					isFollower={$followStateMap.get(pubkey)}
-					kind1={$kind1Events.find((ev) => ev.pubkey === pubkey)}
-				/>
-			</li>
-		{/each}
-	</ul>{/if}
-
 <!-- <style>
 	li {
 		content-visibility: auto;
+		contain: layout;
 	}
 </style> -->

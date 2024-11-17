@@ -56,12 +56,12 @@
 	<main>
 		{@render children()}
 	</main>
-
+	<!-- 
 	<footer>
 		<p>
 			visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to learn about SvelteKit
 		</p>
-	</footer>
+	</footer> -->
 </div>
 {#if $loading}
 	<Spinner size="16" class=" fixed bottom-5 right-5" />
@@ -85,7 +85,7 @@
 		margin: 0 auto;
 		box-sizing: border-box;
 	}
-
+	/* 
 	footer {
 		display: flex;
 		flex-direction: column;
@@ -102,5 +102,5 @@
 		footer {
 			padding: 12px 0;
 		}
-	}
+	} */
 </style>

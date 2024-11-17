@@ -1,5 +1,6 @@
 import { kind3Relay } from '$lib/store/constants';
 import {
+	dontCheckFollowState,
 	followStateMap,
 	kind0Events,
 	kind1Events,
@@ -214,13 +215,6 @@ export async function promisePublishSignedEvent(
 }
 
 export const getUserEvents = async (followList: string[], user: string) => {
-	// kind0 のフィルターを作成しイベントを取得
-	const kind0Filters = followList
-		.filter((pub) => get(kind0Events).find((ev) => ev.pubkey === pub) === undefined) //既に持ってるデータを除く
-
-		.map((pub) => {
-			return { authors: [pub], kinds: [0], until: now(), limit: 1 };
-		});
 	// kind3 のフィルターを作成しイベントを取得
 	const kind3Filters = followList
 		.filter((pub) => get(kind3Events).find((ev) => ev.pubkey === pub) === undefined)
@@ -234,22 +228,31 @@ export const getUserEvents = async (followList: string[], user: string) => {
 			return { authors: [pub], kinds: [1], until: now(), limit: 1 };
 		});
 
-	if (kind0Filters.length > 0) {
-		getRxEventsAsStream({ filters: kind0Filters }).subscribe({
-			next: (event) => {
-				//console.log('Received event:', event);
-				kind0Events.update((events) => event);
-			},
-			error: (err) => {
-				console.error('Error:', err);
-			},
-			complete: () => {
-				console.log('Event stream complete');
-				loading.set(false);
-			}
-		});
-	}
+	if (!get(dontCheckFollowState)) {
+		// kind0 のフィルターを作成しイベントを取得
+		const kind0Filters = followList
+			.filter((pub) => get(kind0Events).find((ev) => ev.pubkey === pub) === undefined) //既に持ってるデータを除く
 
+			.map((pub) => {
+				return { authors: [pub], kinds: [0], until: now(), limit: 1 };
+			});
+
+		if (kind0Filters.length > 0) {
+			getRxEventsAsStream({ filters: kind0Filters }).subscribe({
+				next: (event) => {
+					//console.log('Received event:', event);
+					kind0Events.update((events) => event);
+				},
+				error: (err) => {
+					console.error('Error:', err);
+				},
+				complete: () => {
+					console.log('Event stream complete');
+					loading.set(false);
+				}
+			});
+		}
+	}
 	if (kind3Filters.length > 0) {
 		getRxEventsAsStream({ filters: kind3Filters }).subscribe({
 			next: (event) => {

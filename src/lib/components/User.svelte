@@ -8,6 +8,8 @@
 	import ModalUserDetail from './ModalUserDetail.svelte';
 	import { sineIn } from 'svelte/easing';
 	import { nip19 } from 'nostr-tools';
+	import { dontCheckFollowState } from '$lib/store/store';
+	import { _ } from 'svelte-i18n';
 
 	let {
 		pubkey,
@@ -38,9 +40,9 @@
 	});
 
 	const dropdowmMenu = [
-		{ name: 'detail', value: '詳細情報' },
-		{ name: 'njump', value: 'njumpで開く' },
-		{ name: 'delete', value: 'フォローから外す' }
+		{ name: 'detail', value: $_('dropdownMenu.detail') },
+		{ name: 'njump', value: $_('dropdownMenu.njump') },
+		{ name: 'delete', value: $_('dropdownMenu.delete') }
 	];
 	const modalUserDetail = uiHelpers();
 	let modalStatus = $state(false);
@@ -88,7 +90,7 @@
 
 <div class="grid w-full grid-cols-[auto_auto_1fr_auto]">
 	<div class=" mt-1 text-lg">
-		{#if isFollower}🫂{:else if isFollower === false}😟{:else}❔️{/if}
+		{#if !$dontCheckFollowState}{#if isFollower}🫂{:else if isFollower === false}😟{:else}❔️{/if}{/if}
 	</div>
 	<div class=" mr-1 mt-1 h-16 w-16 overflow-hidden rounded-lg border border-secondary-600">
 		{#if profile?.picture && profile?.picture !== ''}

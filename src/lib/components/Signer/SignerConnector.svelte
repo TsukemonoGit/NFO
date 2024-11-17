@@ -1,6 +1,6 @@
 <script lang="ts">
 	//SignerConnector.svelte
-	import { Toggle } from 'svelte-5-ui-lib';
+	import { Checkbox } from 'svelte-5-ui-lib';
 
 	import LoginNip46 from './LoginNip46.svelte';
 	import LoginNcryptsec from './LoginNcryptsec.svelte';
@@ -8,8 +8,9 @@
 	import { Nip07ExtensionSigner, type Nip07Extension } from 'nostr-signer-connector';
 	import { Button } from 'svelte-5-ui-lib';
 	import { LOGIN } from '$lib/store/constants';
+	import { _ } from 'svelte-i18n';
 
-	const loginType = ['nip49', 'nip07', 'nip46'];
+	const loginType = [/*'nip49',*/ 'nip07', 'nip46'];
 	let { closeModal } = $props<{
 		closeModal: () => void;
 	}>();
@@ -41,11 +42,11 @@
 </div>
 <!-- {#if selectType === 'nip07'}
 	<LoginNip07 /> -->
-{#if selectType === 'nip49'}
-	<LoginNcryptsec />
-{:else if selectType === 'nip46'}
+<!-- {#if selectType === 'nip49'}
+	<LoginNcryptsec /> -->
+{#if selectType === 'nip46'}
 	<LoginNip46 {closeModal} {saveSigner} /><!---->
 {/if}
-<Toggle bind:checked={saveSigner}
-	>Signer情報を保存する(サイドページを開いたときに前回のSigner情報が引き継がれます)</Toggle
+<Checkbox class="my-auto" classLabel="flex align-center  break-words" bind:checked={saveSigner}
+	>{$_('saveSigner')}</Checkbox
 >

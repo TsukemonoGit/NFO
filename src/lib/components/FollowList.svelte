@@ -16,9 +16,11 @@
 	import type { EventParameters } from 'nostr-typedef';
 	import { getEventHash, type EventTemplate } from 'nostr-tools';
 	import { Modal, uiHelpers } from 'svelte-5-ui-lib';
-	import SignerConnector from './Signer/GetPublickey/SignerConnector.svelte';
+	import SignerConnector from './Signer/SignerConnector.svelte';
 	import { writable } from 'svelte/store';
 	import { toast } from '@zerodevx/svelte-toast';
+	import { _ } from 'svelte-i18n';
+
 	let {
 		user
 	}: {
@@ -194,7 +196,7 @@
 {#if !kind3Event}
 	loading...
 {:else if followList.length === 0 && !$loading}
-	フォローゼロです
+	{$_('follow_zero')}
 {:else}
 	<FolloweeData {followList} {user} {handleDelete} />
 {/if}

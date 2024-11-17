@@ -12,3 +12,5 @@ export const kind3Events = writable<Nostr.Event[]>([]);
 export const kind0Events = writable<Nostr.Event[]>([]);
 export const kind1Events = writable<Nostr.Event[]>([]);
 export const followStateMap = writable<Map<string, boolean>>(new Map());
+
+export const dontCheckFollowState = writable<boolean>(false);

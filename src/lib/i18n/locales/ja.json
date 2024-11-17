@@ -1,0 +1,15 @@
+{
+  "description": "ユーザーのフォローリストを取得し、最新の投稿時間、相互フォローかどうかの情報を表示します。\nソート機能もあるので、最近投稿がない人のフォローなど、簡単に整理することができます。",
+  "saveSigner": "Signer情報を保存する(サイドページを開いたときに前回のSigner情報が引き継がれます)",
+  "dontCheckFollowState": "相手からのフォロー状況を確認しない",
+  "dropdownMenu.detail": "詳細情報",
+  "dropdownMenu.njump": "njumpで開く",
+  "dropdownMenu.delete": "フォローを外す",
+  "follow_zero": "フォロー人数が0です",
+  "sortType.default": "フォローした順",
+  "sortType.note": "最新投稿順",
+  "sortType.followStatus": "フォロー状況順",
+  "followCount": "フォロー人数",
+  "mutualFollow": "相互",
+  "UnilateralFollow": "片思い"
+}
