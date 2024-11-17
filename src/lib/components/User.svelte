@@ -124,11 +124,11 @@
 					{dropdownStatus}
 					closeDropdown={closeDropdownIcon}
 					params={{ y: 0, duration: 200, easing: sineIn }}
-					class="absolute top-[20px] w-fit  -translate-x-full break-keep "
+					class="absolute top-[20px]   w-fit -translate-x-full  break-keep"
 				>
 					<DropdownUl>
 						{#each dropdowmMenu as { name, value }}
-							<DropdownLi liClass="hover:bg-primary-300/50  cursor-pointer px-2 py-1"
+							<DropdownLi liClass="hover:bg-primary-300/50  cursor-pointer px-2 py-1 "
 								><button class="w-full text-left" onclick={() => handleClickMenu(name)}
 									>{value}</button
 								></DropdownLi

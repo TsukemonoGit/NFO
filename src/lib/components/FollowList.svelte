@@ -174,7 +174,6 @@
 					followList = kind3Event.tags
 						.filter((tag) => tag[0] === 'p' && hexRegex.test(tag[1]))
 						.map((tag) => tag[1]);
-					getUserEvents(followList, user);
 				}
 			} catch (error) {
 				console.error('Error during signing:', error);

@@ -30,7 +30,7 @@
 
 	//sort
 	let sortedFollowList = $state<string[]>(followList);
-	let sortSelected: string | undefined = $state();
+	let sortSelected: string | undefined = $state('default');
 	const sortType: SortType[] = [
 		{ value: 'default', name: 'フォローリスト順' },
 		{ value: 'note', name: '最終投稿順' },
@@ -103,3 +103,9 @@
 			</li>
 		{/each}
 	</ul>{/if}
+
+<!-- <style>
+	li {
+		content-visibility: auto;
+	}
+</style> -->
