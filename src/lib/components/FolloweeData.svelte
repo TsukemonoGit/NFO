@@ -13,7 +13,11 @@
 	}
 
 	// export let => Props
-	let { followList, user }: { followList: string[]; user: string } = $props();
+	let {
+		followList,
+		user,
+		handleDelete
+	}: { followList: string[]; user: string; handleDelete: (pubkey: string) => void } = $props();
 
 	// Events
 	const kind3Events = writable<Nostr.Event[]>([]);
@@ -111,7 +115,7 @@
 	let sortedFollowList = $state<string[]>(followList);
 	let sortSelected: string | undefined = $state();
 	const sortType: SortType[] = [
-		{ value: 'default', name: 'フォロー順' },
+		{ value: 'default', name: 'フォローリスト順' },
 		{ value: 'note', name: '最終投稿順' },
 		{ value: 'followStatus', name: '相互状態順' }
 	];
@@ -134,7 +138,7 @@
 					sortedFollowList = $kind1Events
 						.slice()
 						.sort((a, b) => a.created_at - b.created_at)
-						.map((ev) => ev.pubkey);
+						.map((ev) => ev.pubkey); //.filter((value)=>followList.includes(value));
 				} else {
 					sortedFollowList = $kind1Events
 						.slice()
@@ -168,6 +172,7 @@
 		{#each sortedFollowList as pubkey}
 			<li>
 				<User
+					{handleDelete}
 					{user}
 					{pubkey}
 					kind0={$kind0Events.find((ev) => ev.pubkey === pubkey)}

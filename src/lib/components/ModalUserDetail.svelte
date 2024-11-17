@@ -15,4 +15,8 @@
 	} = $props();
 </script>
 
-{profile?.about}
+{#if !profile}
+	No Data
+{:else}
+	{profile?.about}
+{/if}

@@ -8,12 +8,14 @@ import {
 	latest,
 	latestEach,
 	uniq,
-	type EventPacket
+	type EventPacket,
+	type OkPacketAgainstEvent
 } from 'rx-nostr';
 import { verifier as cryptoVerifier } from 'rx-nostr-crypto';
 import { get } from 'svelte/store';
 import { Observable, scan, Subject, type OperatorFunction } from 'rxjs';
 import { sortEventPackets } from './util';
+import type { EventParameters } from 'nostr-typedef';
 
 const rxNostr = createRxNostr({
 	verifier: get(verifier) ?? cryptoVerifier,
@@ -173,4 +175,32 @@ export function scanArray<A extends EventPacket>(): OperatorFunction<A, A[]> {
 
 		return sorted;
 	}, []);
+}
+
+export async function promisePublishSignedEvent(
+	event: Nostr.Event,
+	relays?: string[] | undefined
+): Promise<{ event: Nostr.Event; res: OkPacketAgainstEvent[] }> {
+	if (!relays && Object.entries(rxNostr.getDefaultRelays()).length === 0) {
+		console.log('error');
+		throw new Error('No default relays found.');
+	}
+
+	return new Promise<OkPacketAgainstEvent[]>((resolve) => {
+		let results: OkPacketAgainstEvent[] = [];
+		const timeoutId = setTimeout(() => {
+			resolve(results);
+		}, 3000);
+
+		rxNostr.send(event, { relays: relays }).subscribe({
+			next: (packet) => {
+				console.log(`リレー ${packet.from} への送信が ${packet.ok ? '成功' : '失敗'} しました。`);
+				results.push(packet);
+			},
+			complete: () => {
+				clearTimeout(timeoutId);
+				resolve(results);
+			}
+		});
+	}).then((res) => ({ event, res }));
 }

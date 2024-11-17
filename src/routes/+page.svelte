@@ -41,6 +41,7 @@
 	};
 
 	const toHex = (npub: string | undefined): string | undefined => {
+		npub = npub?.trim();
 		if (npub && npubRegex.test(npub)) {
 			try {
 				return nip19.decode(npub).data as string;

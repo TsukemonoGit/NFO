@@ -33,6 +33,7 @@
 		"vitest": "^2.0.4"
 	},
 	"dependencies": {
+		"flowbite-svelte-icons": "^2.0.2",
 		"nostr-signer-connector": "^0.4.0",
 		"nostr-tools": "^2.10.3",
 		"nostr-typedef": "^0.11.0",
