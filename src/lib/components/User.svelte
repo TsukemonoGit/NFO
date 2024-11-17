@@ -94,12 +94,15 @@
 		{#if !$dontCheckFollowState}{#if isFollower}🫂{:else if isFollower === false}😟{:else}❔️{/if}{/if}
 	</div>
 	<div class=" mr-1 mt-1 h-16 w-16 overflow-hidden rounded-lg border border-secondary-600">
-		<img
-			src={profile?.picture}
-			alt="Avatar"
-			class=" overflow-hidden object-contain"
-			style=" object-fit: cover; object-position: center;"
-		/>
+		{#if profile?.picture && profile?.picture !== ''}
+			<img
+				src={profile?.picture}
+				alt="Avatar"
+				class=" overflow-hidden object-cover"
+				style="height: 100%; width: 100%; object-fit: cover; object-position: center;"
+			/>{:else}<div class="flex h-full items-center justify-center text-center">
+				no<br />Avatar
+			</div>{/if}
 	</div>
 	<div class="flex flex-col">
 		<div class=" text-secondary-600">

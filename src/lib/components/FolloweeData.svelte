@@ -90,7 +90,7 @@
 				{$_('UnilateralFollow')}:{followList.filter((pub) => $followStateMap.get(pub) === false)
 					.length}{/if}
 		</div>
-		<div class="flex">
+		<div class="flex gap-1">
 			<Select id="sort" bind:value={sortSelected} placeholder="sort">
 				{#each sortType as { value, name }}
 					<option {value}>{name}</option>
