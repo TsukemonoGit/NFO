@@ -57,15 +57,15 @@
 			case 'note':
 				// `created_at` に基づいて並べ替え
 				if (ascending) {
-					sortedFollowList = $kind1Events
-						.filter((ev) => followList.includes(ev.pubkey))
-						.sort((a, b) => a.created_at - b.created_at)
-						.map((ev) => ev.pubkey); //.filter((value)=>followList.includes(value));
+					sortedFollowList = Array.from($kind1Events.values())
+						.filter((ev) => followList.includes(ev.event.pubkey))
+						.sort((a, b) => a.event.created_at - b.event.created_at)
+						.map((ev) => ev.event.pubkey); //.filter((value)=>followList.includes(value));
 				} else {
-					sortedFollowList = $kind1Events
-						.filter((ev) => followList.includes(ev.pubkey))
-						.sort((a, b) => b.created_at - a.created_at)
-						.map((ev) => ev.pubkey);
+					sortedFollowList = Array.from($kind1Events.values())
+						.filter((ev) => followList.includes(ev.event.pubkey))
+						.sort((a, b) => b.event.created_at - a.event.created_at)
+						.map((ev) => ev.event.pubkey);
 				}
 				break;
 			case 'followStatus':
@@ -84,7 +84,7 @@
 	<div class="flex items-center justify-between">
 		<div>
 			{$_('followCount')}： {followList.length}
-			{#if !$dontCheckFollowState}{$_('mutualFollow')}相互:{followList.filter((pub) =>
+			{#if !$dontCheckFollowState}{$_('mutualFollow')}:{followList.filter((pub) =>
 					$followStateMap.get(pub)
 				).length}
 				{$_('UnilateralFollow')}:{followList.filter((pub) => $followStateMap.get(pub) === false)
@@ -110,9 +110,9 @@
 						{handleDelete}
 						{user}
 						{pubkey}
-						kind0={$kind0Events.find((ev) => ev.pubkey === pubkey)}
+						kind0={$kind0Events.get(pubkey)?.event}
 						isFollower={$followStateMap.get(pubkey)}
-						kind1={$kind1Events.find((ev) => ev.pubkey === pubkey)}
+						kind1={$kind1Events.get(pubkey)?.event}
 					/>
 				</li>
 			{/each}

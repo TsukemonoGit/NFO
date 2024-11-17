@@ -10,6 +10,7 @@
 	import { nip19 } from 'nostr-tools';
 	import { dontCheckFollowState } from '$lib/store/store';
 	import { _ } from 'svelte-i18n';
+	import { locale } from 'svelte-i18n';
 
 	let {
 		pubkey,
@@ -93,13 +94,12 @@
 		{#if !$dontCheckFollowState}{#if isFollower}🫂{:else if isFollower === false}😟{:else}❔️{/if}{/if}
 	</div>
 	<div class=" mr-1 mt-1 h-16 w-16 overflow-hidden rounded-lg border border-secondary-600">
-		{#if profile?.picture && profile?.picture !== ''}
-			<img
-				src={profile?.picture}
-				alt="Avatar"
-				class=" overflow-hidden object-cover"
-				style=" object-fit: cover; object-position: center;"
-			/>{/if}
+		<img
+			src={profile?.picture}
+			alt="Avatar"
+			class=" overflow-hidden object-contain"
+			style=" object-fit: cover; object-position: center;"
+		/>
 	</div>
 	<div class="flex flex-col">
 		<div class=" text-secondary-600">
@@ -110,7 +110,7 @@
 				<time class=" inline-flex" datetime={datetime(kind1.created_at)}
 					>{formatAbsoluteDate(kind1.created_at)}</time
 				>
-				( {formatRelativeDate(kind1.created_at, 'ja')} )
+				( {formatRelativeDate(kind1.created_at, $locale)} )
 			</div>
 			<div class="my-1 whitespace-pre-wrap break-words" style="word-break: break-word;">
 				{kind1.content}
