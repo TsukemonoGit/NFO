@@ -39,7 +39,7 @@
 
 	const dropdowmMenu = [
 		{ name: 'detail', value: '詳細情報' },
-		{ name: 'njump', value: 'njumpでユーザーを開く' },
+		{ name: 'njump', value: 'njumpで開く' },
 		{ name: 'delete', value: 'フォローから外す' }
 	];
 	const modalUserDetail = uiHelpers();

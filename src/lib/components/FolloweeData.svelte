@@ -75,8 +75,12 @@
 	});
 </script>
 
+<div>
+	フォロー人数： {followList.length} 相互:{followList.filter((pub) => $followStateMap.get(pub))
+		.length} 片思い:{followList.filter((pub) => !$followStateMap.get(pub)).length}
+</div>
 <div class="flex">
-	<Select id="sort" class="mt-2" bind:value={sortSelected} placeholder="sort">
+	<Select id="sort" bind:value={sortSelected} placeholder="sort">
 		{#each sortType as { value, name }}
 			<option {value}>{name}</option>
 		{/each}
