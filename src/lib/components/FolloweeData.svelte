@@ -1,11 +1,12 @@
 <script lang="ts">
 	import User from './User.svelte';
-	import * as Nostr from 'nostr-tools';
-	import { getRxEvents, getRxEventsAsStream } from '$lib/utils/rxnostr';
-	import { writable } from 'svelte/store';
-	import { loading } from '$lib/store/store';
+
+	import { getUserEvents } from '$lib/utils/rxnostr';
+
+	import { followStateMap, kind0Events, kind1Events } from '$lib/store/store';
 	import { Button, Select } from 'svelte-5-ui-lib';
-	import { now } from 'rx-nostr';
+
+	import { onMount } from 'svelte';
 	interface SortType {
 		value: string;
 		name: string;
@@ -20,95 +21,11 @@
 	}: { followList: string[]; user: string; handleDelete: (pubkey: string) => void } = $props();
 
 	// Events
-	const kind3Events = writable<Nostr.Event[]>([]);
-	const kind0Events = writable<Nostr.Event[]>([]);
-	const kind1Events = writable<Nostr.Event[]>([]);
-	const followStateMap = writable<Map<string, boolean>>(new Map());
+
 	// $: -> $derived/$effect
 
-	$effect(() => {
-		if ($kind3Events) {
-			$kind3Events.forEach((ev) => {
-				const isMutualFollow = ev.tags.some((tag) => tag[0] === 'p' && tag[1] === user);
-				followStateMap.update((map) => {
-					const newMap = new Map(map);
-					newMap.set(ev.pubkey, isMutualFollow);
-					return newMap; // 必ず新しいMapを返す
-				});
-			});
-		}
-	});
-	$effect(() => {
-		if (followList.length === 0) {
-			kind3Events.set([]);
-			kind0Events.set([]);
-			kind1Events.set([]);
-			followStateMap.set(new Map());
-			return;
-		}
-		$loading = true;
-		// kind0 のフィルターを作成しイベントを取得
-		const kind0Filters = followList.map((pub) => {
-			return { authors: [pub], kinds: [0], until: now(), limit: 1 };
-		});
-		// kind3 のフィルターを作成しイベントを取得
-		const kind3Filters = followList.map((pub) => {
-			return { authors: [pub], kinds: [3], until: now(), limit: 1 };
-		});
-
-		const kind1Filters = followList.map((pub) => {
-			return { authors: [pub], kinds: [1], until: now(), limit: 1 };
-		});
-
-		getRxEventsAsStream({ filters: kind0Filters }).subscribe({
-			next: (event) => {
-				//console.log('Received event:', event);
-				kind0Events.update((events) => event);
-			},
-			error: (err) => {
-				console.error('Error:', err);
-			},
-			complete: () => {
-				console.log('Event stream complete');
-				$loading = false;
-			}
-		});
-
-		getRxEventsAsStream({ filters: kind3Filters }).subscribe({
-			next: (event) => {
-				//	console.log('Received event:', event);
-				kind3Events.update((events) => event);
-			},
-			error: (err) => {
-				console.error('Error:', err);
-			},
-			complete: () => {
-				console.log('Event stream complete');
-				$loading = false;
-			}
-		});
-
-		// getRxEvents({ filters: kind1Filters })
-		// 	.then((events) => {
-		// 		kind1Events.set(events);
-		// 	})
-		// 	.finally(() => {
-		// 		$loading = false;
-		// 	});
-
-		getRxEventsAsStream({ filters: kind1Filters }).subscribe({
-			next: (event: Nostr.Event[]) => {
-				//console.log('Received event:', event);
-				kind1Events.update((events) => event);
-			},
-			error: (err) => {
-				console.error('Error:', err);
-			},
-			complete: () => {
-				console.log('Event stream complete');
-				$loading = false;
-			}
-		});
+	onMount(() => {
+		getUserEvents(followList, user);
 	});
 
 	//sort
@@ -136,12 +53,12 @@
 				// `created_at` に基づいて並べ替え
 				if (ascending) {
 					sortedFollowList = $kind1Events
-						.slice()
+						.filter((ev) => followList.includes(ev.pubkey))
 						.sort((a, b) => a.created_at - b.created_at)
 						.map((ev) => ev.pubkey); //.filter((value)=>followList.includes(value));
 				} else {
 					sortedFollowList = $kind1Events
-						.slice()
+						.filter((ev) => followList.includes(ev.pubkey))
 						.sort((a, b) => b.created_at - a.created_at)
 						.map((ev) => ev.pubkey);
 				}

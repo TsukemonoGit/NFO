@@ -1,5 +1,12 @@
 import { kind3Relay } from '$lib/store/constants';
-import { verifier } from '$lib/store/store';
+import {
+	followStateMap,
+	kind0Events,
+	kind1Events,
+	kind3Events,
+	loading,
+	verifier
+} from '$lib/store/store';
 import * as Nostr from 'nostr-tools';
 import {
 	chunk,
@@ -7,6 +14,7 @@ import {
 	createRxNostr,
 	latest,
 	latestEach,
+	now,
 	uniq,
 	type EventPacket,
 	type OkPacketAgainstEvent
@@ -204,3 +212,90 @@ export async function promisePublishSignedEvent(
 		});
 	}).then((res) => ({ event, res }));
 }
+
+export const getUserEvents = async (followList: string[], user: string) => {
+	// kind0 のフィルターを作成しイベントを取得
+	const kind0Filters = followList
+		.filter((pub) => get(kind0Events).find((ev) => ev.pubkey === pub) === undefined) //既に持ってるデータを除く
+
+		.map((pub) => {
+			return { authors: [pub], kinds: [0], until: now(), limit: 1 };
+		});
+	// kind3 のフィルターを作成しイベントを取得
+	const kind3Filters = followList
+		.filter((pub) => get(kind3Events).find((ev) => ev.pubkey === pub) === undefined)
+		.map((pub) => {
+			return { authors: [pub], kinds: [3], until: now(), limit: 1 };
+		});
+
+	const kind1Filters = followList
+		.filter((pub) => get(kind1Events).find((ev) => ev.pubkey === pub) === undefined)
+		.map((pub) => {
+			return { authors: [pub], kinds: [1], until: now(), limit: 1 };
+		});
+
+	if (kind0Filters.length > 0) {
+		getRxEventsAsStream({ filters: kind0Filters }).subscribe({
+			next: (event) => {
+				//console.log('Received event:', event);
+				kind0Events.update((events) => event);
+			},
+			error: (err) => {
+				console.error('Error:', err);
+			},
+			complete: () => {
+				console.log('Event stream complete');
+				loading.set(false);
+			}
+		});
+	}
+
+	if (kind3Filters.length > 0) {
+		getRxEventsAsStream({ filters: kind3Filters }).subscribe({
+			next: (event) => {
+				//	console.log('Received event:', event);
+				kind3Events.update((events) => event);
+
+				get(kind3Events).forEach((ev) => {
+					const isMutualFollow = ev.tags.some((tag) => tag[0] === 'p' && tag[1] === user);
+					followStateMap.update((map) => {
+						const newMap = new Map(map);
+						newMap.set(ev.pubkey, isMutualFollow);
+						return newMap; // 必ず新しいMapを返す
+					});
+				});
+			},
+			error: (err) => {
+				console.error('Error:', err);
+			},
+			complete: () => {
+				console.log('Event stream complete');
+				loading.set(false);
+			}
+		});
+	}
+
+	// getRxEvents({ filters: kind1Filters })
+	// 	.then((events) => {
+	// 		kind1Events.set(events);
+	// 	})
+	// 	.finally(() => {
+	// 		$loading = false;
+	// 	});
+
+	if (kind1Filters.length > 0) {
+		getRxEventsAsStream({ filters: kind1Filters }).subscribe({
+			next: (event: Nostr.Event[]) => {
+				//console.log('Received event:', event);
+				kind1Events.update((events) => event);
+			},
+			error: (err) => {
+				console.error('Error:', err);
+			},
+			complete: () => {
+				console.log('Event stream complete');
+				loading.set(false);
+			}
+		});
+	}
+};

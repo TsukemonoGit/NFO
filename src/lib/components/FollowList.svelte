@@ -4,12 +4,17 @@
 	import { kind10002Relay } from '$lib/store/constants';
 	import { getEvent } from '$lib/utils/nostr';
 	import { now, type OkPacketAgainstEvent } from 'rx-nostr';
-	import { getRxEvent, promisePublishSignedEvent, set10002DefaultRelay } from '$lib/utils/rxnostr';
+	import {
+		getRxEvent,
+		getUserEvents,
+		promisePublishSignedEvent,
+		set10002DefaultRelay
+	} from '$lib/utils/rxnostr';
 	import { hexRegex } from '$lib/utils/regex';
 	import FolloweeData from './FolloweeData.svelte';
 	import { loading, signer } from '$lib/store/store';
 	import type { EventParameters } from 'nostr-typedef';
-	import { getEventHash, type EventTemplate, type UnsignedEvent } from 'nostr-tools';
+	import { getEventHash, type EventTemplate } from 'nostr-tools';
 	import { Modal, uiHelpers } from 'svelte-5-ui-lib';
 	import SignerConnector from './Signer/GetPublickey/SignerConnector.svelte';
 	import { writable } from 'svelte/store';
@@ -27,6 +32,9 @@
 	const kind3filters = $derived<Nostr.Filter[]>([
 		{ authors: [user], kinds: [3], until: now(), limit: 1 }
 	]);
+
+	let followList = $state<string[]>([]);
+
 	onMount(async () => {
 		//デフォリレーを取る
 		$loading = true;
@@ -54,14 +62,18 @@
 			return;
 		}
 		kind3Event = kind3;
+		followList = kind3Event.tags
+			.filter((tag) => tag[0] === 'p' && hexRegex.test(tag[1]))
+			.map((tag) => tag[1]);
 	});
-	const followList = $derived<string[]>(
-		kind3Event
-			? kind3Event.tags
-					.filter((tag) => tag[0] === 'p' && hexRegex.test(tag[1]))
-					.map((tag) => tag[1])
-			: []
-	);
+
+	//$derived<string[]>(
+	// 	kind3Event
+	// 		? kind3Event.tags
+	// 				.filter((tag) => tag[0] === 'p' && hexRegex.test(tag[1]))
+	// 				.map((tag) => tag[1])
+	// 		: []
+	// );
 	$loading = false;
 
 	const modalSigner = uiHelpers();
@@ -151,9 +163,14 @@
 				const { event: resEvent, res } = await promisePublishSignedEvent(signedEvent);
 				console.log(res);
 				const isSuccessRelays: OkPacketAgainstEvent[] = res.filter((item) => item.ok);
+
 				if (isSuccessRelays.length > 0) {
 					kind3Event = resEvent;
-					//現状kind3が変わったらfollowListもかわるし、kind0とかkind1とか取り直されてしまうのでなんかいい感じにしないといけない
+
+					followList = kind3Event.tags
+						.filter((tag) => tag[0] === 'p' && hexRegex.test(tag[1]))
+						.map((tag) => tag[1]);
+					getUserEvents(followList, user);
 				}
 			} catch (error) {
 				console.error('Error during signing:', error);
@@ -163,15 +180,11 @@
 			}
 		}
 	};
-
-	$effect(() => {
-		modalSignerStatus = modalSigner.isOpen;
-	});
 </script>
 
 {#if !kind3Event}
 	loading...
-{:else if followList && followList.length === 0 && !$loading}
+{:else if followList.length === 0 && !$loading}
 	フォローゼロです
 {:else}
 	<FolloweeData {followList} {user} {handleDelete} />
