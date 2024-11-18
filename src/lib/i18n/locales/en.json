@@ -11,5 +11,6 @@
   "sortType.followStatus": "Follow Status Order",
   "followCount": "Following count",
   "mutualFollow": "Mutual follow",
-  "UnilateralFollow": "Unilateral Follow"
+  "UnilateralFollow": "Unilateral Follow",
+  "unknown": "unknown"
 }

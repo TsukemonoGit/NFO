@@ -11,5 +11,6 @@
   "sortType.followStatus": "フォロー状況順",
   "followCount": "フォロー人数",
   "mutualFollow": "相互",
-  "UnilateralFollow": "片思い"
+  "UnilateralFollow": "片思い",
+  "unknown": "不明"
 }

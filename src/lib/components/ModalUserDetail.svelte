@@ -59,7 +59,7 @@
 						style=" object-fit: cover; object-position: center;"
 					/>{/if}
 			</div>
-			{#if isFollower}🫂{:else if isFollower === false}😟{:else}❔️{/if}
+			{#if isFollower}🫂{:else if isFollower === false}😐{:else}❔️{/if}
 		</div>
 		<div class="relative p-1">
 			{#if profile.banner}

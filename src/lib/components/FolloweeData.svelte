@@ -83,12 +83,16 @@
 <div class="mt-4 rounded-md border border-secondary-500 p-2">
 	<div class="flex items-center justify-between">
 		<div>
-			{$_('followCount')}： {followList.length}
-			{#if !$dontCheckFollowState}{$_('mutualFollow')}:{followList.filter((pub) =>
-					$followStateMap.get(pub)
+			<span class="font-bold">{$_('followCount')}</span>:
+			{followList.length}
+			{#if !$dontCheckFollowState}<span class="ml-2 font-bold">{$_('mutualFollow')}🫂</span>: {followList.filter(
+					(pub) => $followStateMap.get(pub)
 				).length}
-				{$_('UnilateralFollow')}:{followList.filter((pub) => $followStateMap.get(pub) === false)
-					.length}{/if}
+				<span class="ml-2 font-bold">{$_('UnilateralFollow')}😐</span>: {followList.filter(
+					(pub) => $followStateMap.get(pub) === false
+				).length}<span class="ml-2 font-bold">{$_('unknown')}❔️</span>: {followList.filter(
+					(pub) => $followStateMap.get(pub) === undefined
+				).length}{/if}
 		</div>
 		<div class="flex gap-1">
 			<Select id="sort" bind:value={sortSelected} placeholder="sort">

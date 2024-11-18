@@ -91,7 +91,7 @@
 
 <div class="grid w-full grid-cols-[auto_auto_1fr_auto]">
 	<div class=" mt-1 text-lg">
-		{#if !$dontCheckFollowState}{#if isFollower}🫂{:else if isFollower === false}😟{:else}❔️{/if}{/if}
+		{#if !$dontCheckFollowState}{#if isFollower}🫂{:else if isFollower === false}😐{:else}❔️{/if}{/if}
 	</div>
 	<div class=" mr-1 mt-1 h-16 w-16 overflow-hidden rounded-lg border border-secondary-600">
 		{#if profile?.picture && profile?.picture !== ''}
