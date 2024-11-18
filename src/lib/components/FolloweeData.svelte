@@ -35,12 +35,12 @@
 
 	// $: -> $derived/$effect
 
-	onMount(() => {
-		console.log('mount');
-		if ($user) {
-			getUserEvents(followList, $user);
-		}
-	});
+	// onMount(() => {
+	// 	console.log('mount', $user, followList.length);
+	// 	if ($user) {
+	// 		getUserEvents(followList, $user);
+	// 	}
+	// });
 
 	//sort
 	let sortedFollowList = $state<string[]>(followList);

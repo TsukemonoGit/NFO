@@ -135,6 +135,7 @@ export function getRxEventsAsStream({
 }: {
 	filters: Nostr.Filter[];
 }): Observable<SvelteMap<string, EventPacket>> {
+	flushes$.next();
 	return new Observable<SvelteMap<string, EventPacket>>((subscriber) => {
 		const rxReq = createRxBackwardReq();
 		const chunkedReq = rxReq.pipe(
@@ -173,7 +174,7 @@ export function getRxEventsAsStream({
 
 		// Cleanup logic
 		return () => {
-			// rxReq.cancel(); // 必要ならキャンセル処理を追加
+			// 必要ならキャンセル処理を追加
 		};
 	});
 }
@@ -251,7 +252,7 @@ export async function promisePublishSignedEvent(
 	}).then((res) => ({ event, res }));
 }
 
-export const getUserEvents = async (followList: string[], user: string) => {
+export const getUserEvents = async (followList: string[]) => {
 	flushes$.next(); //uniqのクリア
 	// kind3 のフィルターを作成しイベントを取得
 	const kind3Filters = followList

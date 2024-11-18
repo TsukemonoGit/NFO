@@ -39,7 +39,7 @@
 			relays: kind10002Relay,
 			timeout: 4000
 		});
-		console.log(kind10002);
+		console.log('kind10002', kind10002);
 		if (!kind10002) {
 			//error
 			$loading = false;
@@ -51,7 +51,7 @@
 		const kind3 = await getRxEvent({
 			filters: kind3filters
 		});
-		console.log(kind3);
+		console.log('kind3', kind3);
 		if (!kind3) {
 			//error
 			$loading = false;
@@ -61,6 +61,7 @@
 		followList = kind3Event.tags
 			.filter((tag) => tag[0] === 'p' && hexRegex.test(tag[1]))
 			.map((tag) => tag[1]);
+		getUserEvents(followList);
 	});
 
 	//$derived<string[]>(
