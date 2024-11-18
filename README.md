@@ -1,3 +1,19 @@
+# Nostr Follow Organizer
+https://tsukemonogit.github.io/FollowClean/
+
+En
+
+It retrieves a user's following list and displays information such as the time of their most recent post and whether or not they are following each other. There is also a sorting function, so you can easily organize your following, such as people who haven't posted recently.
+
+---
+Ja
+
+ユーザーのフォローリストを取得し、最新の投稿時間、相互フォローかどうかの情報を表示します。 
+
+ソート機能もあるので、最近投稿がない人のフォローなど、簡単に整理することができます。
+
+
+------
 # sv
 
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
