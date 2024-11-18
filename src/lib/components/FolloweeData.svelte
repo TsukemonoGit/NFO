@@ -71,9 +71,15 @@
 			case 'followStatus':
 				// フォロー状態に基づいて並べ替え
 				sortedFollowList = followList.slice().sort((a, b) => {
-					const aStatus = $followStateMap.get(a) ? 1 : 0;
-					const bStatus = $followStateMap.get(b) ? 1 : 0;
-					return ascending ? bStatus - aStatus : aStatus - bStatus;
+					// ステータスを明確に数値化
+					const statusToValue = (status: boolean | undefined) => {
+						if (status === true) return 2; // true を 2
+						if (status === false) return 1; // false を 1
+						return 0; // undefined を 0
+					};
+					const aStatus = statusToValue($followStateMap.get(a));
+					const bStatus = statusToValue($followStateMap.get(b));
+					return ascending ? aStatus - bStatus : bStatus - aStatus;
 				});
 				break;
 		}
