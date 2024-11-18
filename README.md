@@ -1,5 +1,5 @@
 # Nostr Follow Organizer
-https://tsukemonogit.github.io/FollowClean/
+https://tsukemonogit.github.io/NFO/
 
 En
 
