@@ -86,7 +86,7 @@
 	});
 </script>
 
-<div class="mt-4 rounded-md border border-secondary-500 p-2">
+<div class="mt-4 rounded-md border border-secondary-500 p-1">
 	<div class="flex items-center justify-between">
 		<div>
 			<span class="font-bold">{$_('followCount')}</span>:

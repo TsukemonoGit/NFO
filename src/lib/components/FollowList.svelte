@@ -213,7 +213,6 @@
 	};
 </script>
 
-<Button onclick={() => modalSigner.toggle()}>button</Button>
 {#if !kind3Event}
 	loading...
 {:else if followList.length === 0 && !$loading}

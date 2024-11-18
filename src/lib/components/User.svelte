@@ -89,20 +89,26 @@
 	});
 </script>
 
-<div class="grid w-full grid-cols-[auto_auto_1fr_auto]">
-	<div class=" mt-1 text-lg">
-		{#if !$dontCheckFollowState}{#if isFollower}🫂{:else if isFollower === false}😐{:else}❔️{/if}{/if}
-	</div>
-	<div class=" mr-1 mt-1 h-16 w-16 overflow-hidden rounded-lg border border-secondary-600">
-		{#if profile?.picture && profile?.picture !== ''}
-			<img
-				src={profile?.picture}
-				alt="Avatar"
-				class=" overflow-hidden object-cover"
-				style="height: 100%; width: 100%; object-fit: cover; object-position: center;"
-			/>{:else}<div class="flex h-full items-center justify-center text-center">
-				no<br />Avatar
-			</div>{/if}
+<div class="grid w-full grid-cols-[auto_1fr_auto] p-1">
+	<div>
+		<div class="relative mr-1 mt-1 h-16 w-16">
+			<div class="absolute h-16 w-16 overflow-hidden rounded-lg border border-secondary-600">
+				{#if profile?.picture && profile?.picture !== ''}
+					<img
+						src={profile?.picture}
+						alt="Avatar"
+						class="absolute overflow-hidden object-cover"
+						style="height: 100%; width: 100%; object-fit: cover; object-position: center;"
+					/>{:else}<div class="flex h-full items-center justify-center text-center">
+						no<br />Avatar
+					</div>{/if}
+			</div>
+			<div
+				class="align-center absolute -left-1 -top-1 z-10 flex h-6 w-6 items-center justify-center overflow-visible rounded-full border border-secondary-600 bg-white"
+			>
+				{#if !$dontCheckFollowState}{#if isFollower}🫂{:else if isFollower === false}😐{:else}❔️{/if}{/if}
+			</div>
+		</div>
 	</div>
 	<div class="flex flex-col">
 		<div class=" text-secondary-600">
@@ -121,7 +127,7 @@
 	</div>
 	<div>
 		<div class="flex items-start justify-center">
-			<Button onclick={dropdown.toggle} pill={true} class="m-1 !p-2" color="secondary"
+			<Button onclick={dropdown.toggle} pill={true} class=" !p-1.5" color="secondary"
 				><DotsVerticalOutline class="dots-menu cursor-pointer dark:text-white" /></Button
 			>
 			<div class="relative">
