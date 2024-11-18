@@ -17,11 +17,11 @@
 		kind0,
 		isFollower,
 		kind1,
-		user,
+
 		handleDelete
 	}: {
 		pubkey: string;
-		user: string;
+
 		kind0: Nostr.Event | undefined;
 		kind1: Nostr.Event | undefined;
 		isFollower: boolean | undefined;

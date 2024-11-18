@@ -23,8 +23,8 @@ import {
 import { verifier as cryptoVerifier } from 'rx-nostr-crypto';
 import { get } from 'svelte/store';
 import { Observable, scan, Subject, type OperatorFunction } from 'rxjs';
-import { sortEventPackets } from './util';
-import type { EventParameters } from 'nostr-typedef';
+
+import { SvelteMap } from 'svelte/reactivity';
 
 const rxNostr = createRxNostr({
 	verifier: get(verifier) ?? cryptoVerifier,
@@ -95,12 +95,12 @@ export async function getRxEvents({
 	filters
 }: {
 	filters: Nostr.Filter[];
-}): Promise<Map<string, EventPacket>> {
+}): Promise<SvelteMap<string, EventPacket>> {
 	flushes$.next();
 	const rxReq = createRxBackwardReq();
 
 	return new Promise((resolve, reject) => {
-		let packets: Map<string, EventPacket> = new Map();
+		let packets: SvelteMap<string, EventPacket> = new SvelteMap();
 
 		rxNostr
 			.use(rxReq)
@@ -134,8 +134,8 @@ export function getRxEventsAsStream({
 	filters
 }: {
 	filters: Nostr.Filter[];
-}): Observable<Map<string, EventPacket>> {
-	return new Observable<Map<string, EventPacket>>((subscriber) => {
+}): Observable<SvelteMap<string, EventPacket>> {
+	return new Observable<SvelteMap<string, EventPacket>>((subscriber) => {
 		const rxReq = createRxBackwardReq();
 		const chunkedReq = rxReq.pipe(
 			chunk(
@@ -160,7 +160,7 @@ export function getRxEventsAsStream({
 				scanMap() //scanArray()
 			)
 			.subscribe({
-				next: (packets: Map<string, EventPacket>) => {
+				next: (packets: SvelteMap<string, EventPacket>) => {
 					subscriber.next(packets);
 				},
 				error: (err) => subscriber.error(err),
@@ -185,8 +185,8 @@ export function getRxEventsAsStream({
 // 		return sorted;
 // 	}, []);
 // }
-export function scanMap<A extends EventPacket>(): OperatorFunction<A, Map<string, A>> {
-	return scan((latestByPubkey: Map<string, A>, a: A) => {
+export function scanMap<A extends EventPacket>(): OperatorFunction<A, SvelteMap<string, A>> {
+	return scan((latestByPubkey: SvelteMap<string, A>, a: A) => {
 		// 現在の pubkey の最新イベントを取得
 		const existing = latestByPubkey.get(a.event.pubkey);
 
@@ -197,7 +197,7 @@ export function scanMap<A extends EventPacket>(): OperatorFunction<A, Map<string
 
 		// 最新状態の Map を返す
 		return latestByPubkey;
-	}, new Map<string, A>());
+	}, new SvelteMap<string, A>());
 }
 // export function scanArray<A extends EventPacket>(): OperatorFunction<A, A[]> {
 // 	return scan((acc: A[], a: A) => {
@@ -252,15 +252,16 @@ export async function promisePublishSignedEvent(
 }
 
 export const getUserEvents = async (followList: string[], user: string) => {
+	flushes$.next(); //uniqのクリア
 	// kind3 のフィルターを作成しイベントを取得
 	const kind3Filters = followList
-		.filter((pub) => get(kind3Events).get(pub) === undefined)
+		//.filter((pub) => get(kind3Events).get(pub) === undefined)
 		.map((pub) => {
 			return { authors: [pub], kinds: [3], until: now(), limit: 1 };
 		});
 
 	const kind1Filters = followList
-		.filter((pub) => get(kind1Events).get(pub) === undefined)
+		//.filter((pub) => get(kind1Events).get(pub) === undefined)
 		.map((pub) => {
 			return { authors: [pub], kinds: [1], until: now(), limit: 1 };
 		});
@@ -268,7 +269,7 @@ export const getUserEvents = async (followList: string[], user: string) => {
 	if (!get(dontCheckFollowState)) {
 		// kind0 のフィルターを作成しイベントを取得
 		const kind0Filters = followList
-			.filter((pub) => get(kind0Events).get(pub) === undefined) //既に持ってるデータを除く
+			//	.filter((pub) => get(kind0Events).get(pub) === undefined) //既に持ってるデータを除く
 
 			.map((pub) => {
 				return { authors: [pub], kinds: [0], until: now(), limit: 1 };
@@ -295,15 +296,6 @@ export const getUserEvents = async (followList: string[], user: string) => {
 			next: (event) => {
 				//	console.log('Received event:', event);
 				kind3Events.update((events) => event);
-
-				Array.from(get(kind3Events).values()).forEach((ev) => {
-					const isMutualFollow = ev.event.tags.some((tag) => tag[0] === 'p' && tag[1] === user);
-					followStateMap.update((map) => {
-						const newMap = new Map(map);
-						newMap.set(ev.event.pubkey, isMutualFollow);
-						return newMap; // 必ず新しいMapを返す
-					});
-				});
 			},
 			error: (err) => {
 				console.error('Error:', err);
@@ -325,7 +317,7 @@ export const getUserEvents = async (followList: string[], user: string) => {
 
 	if (kind1Filters.length > 0) {
 		getRxEventsAsStream({ filters: kind1Filters }).subscribe({
-			next: (event: Map<string, EventPacket>) => {
+			next: (event: SvelteMap<string, EventPacket>) => {
 				//console.log('Received event:', event);
 				kind1Events.update((events) => event);
 			},

@@ -3,12 +3,20 @@
 
 	import { getUserEvents } from '$lib/utils/rxnostr';
 
-	import { dontCheckFollowState, followStateMap, kind0Events, kind1Events } from '$lib/store/store';
+	import {
+		dontCheckFollowState,
+		followStateMap,
+		kind0Events,
+		kind1Events,
+		kind3Events,
+		user
+	} from '$lib/store/store';
 	import { Button, Select } from 'svelte-5-ui-lib';
 
 	import { onMount } from 'svelte';
 	import { CaretUpSolid, CaretDownSolid } from 'flowbite-svelte-icons';
 	import { _ } from 'svelte-i18n';
+	import { derived } from 'svelte/store';
 
 	interface SortType {
 		value: string;
@@ -19,16 +27,19 @@
 	// export let => Props
 	let {
 		followList,
-		user,
+
 		handleDelete
-	}: { followList: string[]; user: string; handleDelete: (pubkey: string) => void } = $props();
+	}: { followList: string[]; handleDelete: (pubkey: string) => void } = $props();
 
 	// Events
 
 	// $: -> $derived/$effect
 
 	onMount(() => {
-		getUserEvents(followList, user);
+		console.log('mount');
+		if ($user) {
+			getUserEvents(followList, $user);
+		}
 	});
 
 	//sort
@@ -118,7 +129,6 @@
 				<li>
 					<User
 						{handleDelete}
-						{user}
 						{pubkey}
 						kind0={$kind0Events.get(pubkey)?.event}
 						isFollower={$followStateMap.get(pubkey)}

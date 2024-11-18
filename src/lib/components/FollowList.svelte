@@ -12,27 +12,21 @@
 	} from '$lib/utils/rxnostr';
 	import { hexRegex } from '$lib/utils/regex';
 	import FolloweeData from './FolloweeData.svelte';
-	import { loading, signer } from '$lib/store/store';
+	import { loading, signer, user } from '$lib/store/store';
 	import type { EventParameters } from 'nostr-typedef';
 	import { getEventHash, type EventTemplate } from 'nostr-tools';
-	import { Button, Modal, uiHelpers } from 'svelte-5-ui-lib';
+	import { Modal, uiHelpers } from 'svelte-5-ui-lib';
 	import SignerConnector from './Signer/SignerConnector.svelte';
 	import { writable } from 'svelte/store';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { _ } from 'svelte-i18n';
 
-	let {
-		user
-	}: {
-		user: string;
-	} = $props();
-
 	let kind3Event = $state<Nostr.Event>();
 	const kind10002filters = $derived<Nostr.Filter[]>([
-		{ authors: [user], kinds: [10002], until: now(), limit: 1 }
+		{ authors: [$user as string], kinds: [10002], until: now(), limit: 1 }
 	]);
 	const kind3filters = $derived<Nostr.Filter[]>([
-		{ authors: [user], kinds: [3], until: now(), limit: 1 }
+		{ authors: [$user as string], kinds: [3], until: now(), limit: 1 }
 	]);
 
 	let followList = $state<string[]>([]);
@@ -106,10 +100,11 @@
 			console.log('error');
 			return;
 		}
-		let tags = kind3Event
-			? structuredClone(kind3Event.tags.map((tag) => (Array.isArray(tag) ? [...tag] : tag)))
-			: [];
-		tags = tags.filter((tag) => !(tag[0] === 'p' && tag[1] === pubkey));
+		// let tags = kind3Event
+		// 	? structuredClone(kind3Event.tags.map((tag) => (Array.isArray(tag) ? [...tag] : tag)))
+		// 	: [];
+		// tags = tags.filter((tag) => !(tag[0] === 'p' && tag[1] === pubkey));
+		const tags = kind3Event.tags.filter((tag) => !(tag[0] === 'p' && tag[1] === pubkey));
 		// kind3Event
 		//		? structuredClone(kind3Event.tags.map((tag) => (Array.isArray(tag) ? [...tag] : tag)))
 		//	: [];
@@ -127,7 +122,7 @@
 			tags: tags,
 			content: kind3Event.content ?? '',
 			created_at: now(),
-			pubkey: user
+			pubkey: $user as string
 		};
 
 		newKind3 = { ...newKind3, id: getEventHash(newKind3) };
@@ -138,11 +133,13 @@
 	const closeSignerModal = () => {
 		console.log('close signer modal');
 		if (!$newKind3Signed && $newKind3Template) {
-			let tags = $newKind3Template
-				? structuredClone(
-						$newKind3Template.tags.map((tag) => (Array.isArray(tag) ? [...tag] : tag))
-					)
-				: [];
+			// let tags = $newKind3Template
+			// 	? structuredClone(
+			// 			$newKind3Template.tags.map((tag) => (Array.isArray(tag) ? [...tag] : tag))
+			// 		)
+			// 	: [];
+			const tags = $newKind3Template.tags.map((tag) => (Array.isArray(tag) ? [...tag] : tag));
+
 			const ev: EventParameters = { ...$newKind3Template, tags: tags };
 
 			console.log(ev);
@@ -169,7 +166,7 @@
 				console.log('Signed Event:', signedEvent);
 
 				//署名したら署名者のpubに上書きされるからチェックする
-				if (signedEvent.pubkey !== user) {
+				if (signedEvent.pubkey !== $user) {
 					toast.push($_('mismatchPubkey'), {
 						theme: {
 							'--toastBackground': ' rgba(255, 60, 0, 0.8)',
@@ -218,7 +215,7 @@
 {:else if followList.length === 0 && !$loading}
 	{$_('follow_zero')}
 {:else}
-	<FolloweeData {followList} {user} {handleDelete} />
+	<FolloweeData {followList} {handleDelete} />
 {/if}
 <Modal title="Select Signer" modalStatus={modalSignerStatus} closeModal={closeSignerModal}>
 	<SignerConnector closeModal={closeSignerModal} />

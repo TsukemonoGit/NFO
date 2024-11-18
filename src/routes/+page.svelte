@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { dontCheckFollowState, loading, signer } from '$lib/store/store';
+	import { dontCheckFollowState, loading, signer, user } from '$lib/store/store';
 	import { Modal, Button, uiHelpers, Input, Checkbox } from 'svelte-5-ui-lib';
 	import { nip19 } from 'nostr-tools';
 	import { LOGIN } from '$lib/store/constants';
@@ -8,12 +8,13 @@
 	import SignerConnector from '$lib/components/Signer/SignerConnector.svelte';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { _ } from 'svelte-i18n';
+	import { writable } from 'svelte/store';
 
 	const modalExample = uiHelpers();
 	let modalStatus = $state(false);
 	//let publicKey = $state<string>();
 	//const closeModal = modalExample.close;
-	let encodedPub = $state<string>();
+	const encodedPub = writable<string>();
 	const closeModal = () => {
 		modalExample.toggle();
 
@@ -26,6 +27,7 @@
 	});
 
 	const onClickGetPubkey = async () => {
+		$encodedPub = '';
 		if (!$signer) {
 			modalExample.toggle();
 		} else {
@@ -33,7 +35,7 @@
 				$loading = true;
 
 				const hexPublicKey = await $signer.getPublicKey();
-				encodedPub = nip19.npubEncode(hexPublicKey);
+				$encodedPub = nip19.npubEncode(hexPublicKey);
 			} catch (error) {
 				console.log(error);
 				toast.push('failed to set signer', {
@@ -59,8 +61,12 @@
 			}
 		}
 	};
-
-	const hexPub = $derived(toHex(encodedPub));
+	encodedPub.subscribe((pub) => {
+		console.log(pub);
+		$user = toHex(pub);
+		console.log($encodedPub);
+		console.log($user);
+	});
 </script>
 
 <svelte:head>
@@ -76,7 +82,7 @@
 
 <section class=" my-4 gap-2">
 	<div class="flex gap-2">
-		<Input bind:value={encodedPub} placeholder="npub..." />
+		<Input bind:value={$encodedPub} placeholder="npub..." />
 		<Button onclick={() => onClickGetPubkey()}>Get Publickey</Button><Button
 			color="secondary"
 			onclick={() => {
@@ -100,8 +106,8 @@
 		</div>
 	</div>
 
-	{#if hexPub}
-		<FollowList user={hexPub} />
+	{#if $user}
+		<FollowList />
 	{/if}
 </section>
 <Modal title="Select Signer" {modalStatus} {closeModal}>
