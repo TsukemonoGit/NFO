@@ -64,7 +64,7 @@
 	</footer> -->
 </div>
 {#if $loading}
-	<Spinner size="16" class=" fixed bottom-5 right-5" />
+	<Spinner size="16" class="fixed  left-[calc(50%-2rem)]  top-[calc(50%-2rem)] " />
 {/if}
 <SvelteToast />
 

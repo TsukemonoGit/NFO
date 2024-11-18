@@ -70,11 +70,11 @@
 		content="A tool to help you keep your Nostr follow list clean and well-organized."
 	/>
 </svelte:head>
-<div class="container">
-	<h1>Nostr Follow Organizer</h1>
-	<p class="break-words">{$_('description')}</p>
-</div>
-<section class="container my-4 gap-2">
+
+<h1>Nostr Follow Organizer</h1>
+<p class="break-words">{$_('description')}</p>
+
+<section class=" my-4 gap-2">
 	<div class="flex gap-2">
 		<Input bind:value={encodedPub} placeholder="npub..." />
 		<Button onclick={() => onClickGetPubkey()}>Get Publickey</Button><Button
