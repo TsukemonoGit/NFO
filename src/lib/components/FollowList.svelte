@@ -15,7 +15,7 @@
 	import { loading, signer } from '$lib/store/store';
 	import type { EventParameters } from 'nostr-typedef';
 	import { getEventHash, type EventTemplate } from 'nostr-tools';
-	import { Modal, uiHelpers } from 'svelte-5-ui-lib';
+	import { Button, Modal, uiHelpers } from 'svelte-5-ui-lib';
 	import SignerConnector from './Signer/SignerConnector.svelte';
 	import { writable } from 'svelte/store';
 	import { toast } from '@zerodevx/svelte-toast';
@@ -80,6 +80,11 @@
 
 	const modalSigner = uiHelpers();
 	let modalSignerStatus = $state(false);
+
+	$effect(() => {
+		modalSignerStatus = modalSigner.isOpen;
+	});
+
 	const newKind3Template = writable<
 		| {
 				kind: number;
@@ -154,13 +159,28 @@
 		}
 
 		console.log('Event before signing:', ev);
-		console.log($signer);
+		//console.log($signer);
 		if (!$signer) {
 			modalSigner.toggle();
 		} else {
 			try {
 				$loading = true;
 				const signedEvent = await $signer.signEvent(ev);
+				console.log('Signed Event:', signedEvent);
+
+				//署名したら署名者のpubに上書きされるからチェックする
+				if (signedEvent.pubkey !== user) {
+					toast.push($_('mismatchPubkey'), {
+						theme: {
+							'--toastBackground': ' rgba(255, 60, 0, 0.8)',
+							'--toastBarHeight': 0
+						}
+					});
+					$newKind3Template = undefined;
+					$newKind3Signed = undefined;
+					return;
+				}
+
 				$newKind3Signed = signedEvent;
 				const { event: resEvent, res } = await promisePublishSignedEvent(signedEvent);
 				console.log(res);
@@ -193,6 +213,7 @@
 	};
 </script>
 
+<Button onclick={() => modalSigner.toggle()}>button</Button>
 {#if !kind3Event}
 	loading...
 {:else if followList.length === 0 && !$loading}

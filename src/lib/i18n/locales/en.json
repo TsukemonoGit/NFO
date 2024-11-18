@@ -12,5 +12,9 @@
   "followCount": "Following count",
   "mutualFollow": "Mutual follow",
   "UnilateralFollow": "Unilateral Follow",
-  "unknown": "unknown"
+  "unknown": "unknown",
+  "mismatchPubkey": "The public key of the data being viewed and the signer are different.",
+  "unfollow.text": "Are you sure you want to unfollow this user?",
+  "unfollow.sure": "Yes, I'm sure",
+  "unfollow.cancel": "No, cancel"
 }

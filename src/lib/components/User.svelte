@@ -152,17 +152,19 @@
 	<div class="text-center">
 		<ExclamationCircleOutline class="mx-auto mb-4 h-12 w-12 text-gray-400 dark:text-gray-200" />
 		<h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-			Are you sure you want to unfollow this user?
+			{$_('unfollow.text')}
 		</h3>
 		<Button
 			color="red"
 			class="me-2"
-			onclick={() => {
+			onclick={async () => {
 				modalDeletePopup.isOpen = false;
+
 				handleDelete(pubkey);
-			}}>Yes, I'm sure</Button
+			}}>{$_('unfollow.sure')}</Button
 		>
-		<Button color="alternative" onclick={() => (modalDeletePopup.isOpen = false)}>No, cancel</Button
+		<Button color="alternative" onclick={() => (modalDeletePopup.isOpen = false)}
+			>{$_('unfollow.cancel')}</Button
 		>
 	</div>
 </Modal>

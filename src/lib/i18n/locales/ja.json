@@ -12,5 +12,9 @@
   "followCount": "フォロー人数",
   "mutualFollow": "相互",
   "UnilateralFollow": "片思い",
-  "unknown": "不明"
+  "unknown": "不明",
+  "mismatchPubkey": "閲覧中のデータと署名者の公開鍵が違います。",
+  "unfollow.text": "ユーザーをアンフォローしていいですか？",
+  "unfollow.sure": "OK",
+  "unfollow.cancel": "Cancel"
 }
