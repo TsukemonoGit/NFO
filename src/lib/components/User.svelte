@@ -103,11 +103,11 @@
 						no<br />Avatar
 					</div>{/if}
 			</div>
-			<div
-				class="align-center absolute -left-1 -top-1 z-10 flex h-6 w-6 items-center justify-center overflow-visible rounded-full border border-secondary-600 bg-white"
-			>
-				{#if !$dontCheckFollowState}{#if isFollower}🫂{:else if isFollower === false}😐{:else}❔️{/if}{/if}
-			</div>
+			{#if !$dontCheckFollowState}<div
+					class="align-center absolute -left-1 -top-1 z-10 flex h-6 w-6 items-center justify-center overflow-visible rounded-full border border-secondary-600 bg-white"
+				>
+					{#if isFollower}🫂{:else if isFollower === false}😐{:else}❔️{/if}
+				</div>{/if}
 		</div>
 	</div>
 	<div class="flex flex-col">
