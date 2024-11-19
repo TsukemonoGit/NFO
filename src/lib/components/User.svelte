@@ -135,7 +135,7 @@
 					{dropdownStatus}
 					closeDropdown={closeDropdownIcon}
 					params={{ y: 0, duration: 200, easing: sineIn }}
-					class="absolute top-[20px]   w-fit -translate-x-full  break-keep"
+					class="absolute top-[20px]   w-40  -translate-x-full  break-keep"
 				>
 					<DropdownUl>
 						{#each dropdowmMenu as { name, value }}

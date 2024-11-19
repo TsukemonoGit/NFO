@@ -101,11 +101,11 @@
 			console.log('error');
 			return;
 		}
-		// let tags = kind3Event
-		// 	? structuredClone(kind3Event.tags.map((tag) => (Array.isArray(tag) ? [...tag] : tag)))
-		// 	: [];
-		// tags = tags.filter((tag) => !(tag[0] === 'p' && tag[1] === pubkey));
-		const tags = kind3Event.tags.filter((tag) => !(tag[0] === 'p' && tag[1] === pubkey));
+		let tags = kind3Event
+			? structuredClone(kind3Event.tags.map((tag) => (Array.isArray(tag) ? [...tag] : tag)))
+			: [];
+		tags = tags.filter((tag) => !(tag[0] === 'p' && tag[1] === pubkey));
+		// const tags = kind3Event.tags.filter((tag) => !(tag[0] === 'p' && tag[1] === pubkey));
 		// kind3Event
 		//		? structuredClone(kind3Event.tags.map((tag) => (Array.isArray(tag) ? [...tag] : tag)))
 		//	: [];
