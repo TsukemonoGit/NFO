@@ -16,9 +16,9 @@
 		sign?: boolean;
 	}>();
 	const loginType = ['nip07', 'nip46'];
-	if (sign) {
-		loginType.push('nip49');
-	}
+	// if (sign) {
+	// 	loginType.push('nip49');
+	// }
 	let saveSigner = $state<boolean>(false);
 	let selectType = $state(); //loginType[2]
 
