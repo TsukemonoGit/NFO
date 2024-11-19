@@ -87,20 +87,30 @@
 	$effect(() => {
 		modalDeleteStatus = modalDeletePopup.isOpen;
 	});
+	let encodedPub = $derived.by(() => {
+		try {
+			return nip19.npubEncode(pubkey);
+		} catch (error) {
+			return undefined;
+		}
+	});
 </script>
 
 <div class="grid w-full grid-cols-[auto_1fr_auto] p-1">
 	<div>
 		<div class="relative mr-1 mt-1 h-16 w-16">
 			<div class="absolute h-16 w-16 overflow-hidden rounded-lg border border-secondary-600">
-				{#if profile?.picture && profile?.picture !== ''}
-					<img
-						src={profile?.picture}
-						alt="Avatar"
-						class="absolute overflow-hidden object-cover"
-						style="height: 100%; width: 100%; object-fit: cover; object-position: center;"
-					/>{:else}<div class="flex h-full items-center justify-center text-center">
-						no<br />Avatar
+				{#if kind0}
+					{#if profile?.picture && profile?.picture !== ''}
+						<img
+							src={profile?.picture}
+							alt="Avatar"
+							class="absolute overflow-hidden object-cover"
+							style="height: 100%; width: 100%; object-fit: cover; object-position: center;"
+						/>{:else}<div class="flex h-full items-center justify-center text-center">
+							no<br />Avatar
+						</div>{/if}{:else}<div class="flex h-full items-center justify-center text-center">
+						?
 					</div>{/if}
 			</div>
 			{#if !$dontCheckFollowState}<div
@@ -111,8 +121,17 @@
 		</div>
 	</div>
 	<div class="flex flex-col">
-		<div class=" text-secondary-600">
-			{profile?.display_name ?? ''}@{profile?.name && profile.name !== '' ? profile.name : 'noname'}
+		<div
+			class=" whitespace-pre-wrap break-words text-secondary-600"
+			style="word-break: break-word;"
+		>
+			{#if kind0}
+				{profile?.display_name ?? ''}@{profile?.name && profile.name !== ''
+					? profile.name
+					: 'noname'}
+			{:else}
+				<span class="text-xs">{encodedPub}</span>
+			{/if}
 		</div>
 		{#if kind1}<div class="font-bold">
 				latest note at
