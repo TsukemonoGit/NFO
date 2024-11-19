@@ -30,7 +30,7 @@ export async function getEvent({
 			.pipe(uniq(), latest())
 			.subscribe({
 				next: (packet) => {
-					console.log('Received:', packet);
+					//console.log('Received:', packet);
 					if (!event || packet.event.created_at > event.created_at) {
 						event = packet.event;
 					}
