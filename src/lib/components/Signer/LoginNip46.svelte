@@ -10,6 +10,7 @@
 		saveSigner: boolean;
 	}>();
 	import { page } from '$app/stores';
+	import { toast } from '@zerodevx/svelte-toast';
 
 	const relayUrls = ['wss://relay.nsec.app/'];
 	const client: Nip46ClientMetadata = {
@@ -74,6 +75,12 @@
 			//console.log(ev);
 		} catch (error) {
 			console.log(error);
+			toast.push('Error', {
+				theme: {
+					'--toastBackground': ' rgba(255, 60, 0, 0.8)',
+					'--toastBarHeight': 0
+				}
+			});
 		}
 		$loading = false;
 	};
@@ -100,6 +107,12 @@
 			//console.log(ev);
 		} catch (error) {
 			console.log(error);
+			toast.push('Error', {
+				theme: {
+					'--toastBackground': ' rgba(255, 60, 0, 0.8)',
+					'--toastBarHeight': 0
+				}
+			});
 		}
 	};
 

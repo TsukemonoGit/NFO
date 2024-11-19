@@ -1,22 +1,11 @@
 <script lang="ts">
 	import User from './User.svelte';
 
-	import { getUserEvents } from '$lib/utils/rxnostr';
-
-	import {
-		dontCheckFollowState,
-		followStateMap,
-		kind0Events,
-		kind1Events,
-		kind3Events,
-		user
-	} from '$lib/store/store';
+	import { dontCheckFollowState, followStateMap, kind0Events, kind1Events } from '$lib/store/store';
 	import { Button, Select } from 'svelte-5-ui-lib';
 
-	import { onMount } from 'svelte';
 	import { CaretUpSolid, CaretDownSolid } from 'flowbite-svelte-icons';
 	import { _ } from 'svelte-i18n';
-	import { derived } from 'svelte/store';
 
 	interface SortType {
 		value: string;

@@ -131,6 +131,9 @@
 		signEventTmp(newKind3);
 		//  console.log(result)
 	};
+	const beforeCloseSignerModal = (ncrysec: string | undefined) => {
+		console.log('before close signer modal', ncrysec);
+	};
 	const closeSignerModal = () => {
 		console.log('close signer modal');
 		if (!$newKind3Signed && $newKind3Template) {
@@ -219,5 +222,10 @@
 	<FolloweeData {followList} {handleDelete} />
 {/if}
 <Modal title="Select Signer" modalStatus={modalSignerStatus} closeModal={closeSignerModal}>
-	<SignerConnector closeModal={closeSignerModal} />
+	<SignerConnector
+		closeModal={(ncrysec) => {
+			beforeCloseSignerModal(ncrysec);
+		}}
+		sign={true}
+	/>
 </Modal>

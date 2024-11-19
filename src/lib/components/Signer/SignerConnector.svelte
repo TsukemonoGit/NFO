@@ -10,10 +10,15 @@
 	import { LOGIN } from '$lib/store/constants';
 	import { _ } from 'svelte-i18n';
 
-	const loginType = [/*'nip49',*/ 'nip07', 'nip46'];
-	let { closeModal } = $props<{
-		closeModal: () => void;
+	let ncrysec = $state<string>();
+	let { closeModal, sign = false } = $props<{
+		closeModal: (ncrysec: string | undefined) => void;
+		sign?: boolean;
 	}>();
+	const loginType = ['nip07', 'nip46'];
+	if (sign) {
+		loginType.push('nip49');
+	}
 	let saveSigner = $state<boolean>(false);
 	let selectType = $state(); //loginType[2]
 
@@ -27,7 +32,7 @@
 				localStorage.setItem(LOGIN, JSON.stringify({ type: 'nip07' }));
 			}
 
-			closeModal();
+			closeModal(ncrysec);
 		}
 		console.log('signer:', type);
 	};
@@ -42,10 +47,13 @@
 </div>
 <!-- {#if selectType === 'nip07'}
 	<LoginNip07 /> -->
-<!-- {#if selectType === 'nip49'}
-	<LoginNcryptsec /> -->
+
 {#if selectType === 'nip46'}
 	<LoginNip46 {closeModal} {saveSigner} /><!---->
+{:else if selectType === 'nip49'}
+	<LoginNcryptsec {closeModal} />
+
+	<!--保存ONにしていても保存されません-->
 {/if}
 <Checkbox class="my-auto" classLabel="flex align-center  break-words" bind:checked={saveSigner}
 	>{$_('saveSigner')}</Checkbox
