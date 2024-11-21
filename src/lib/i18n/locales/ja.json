@@ -16,5 +16,6 @@
   "mismatchPubkey": "閲覧中のデータと署名者の公開鍵が違います。",
   "unfollow.text": "ユーザーをアンフォローしていいですか？",
   "unfollow.sure": "OK",
-  "unfollow.cancel": "Cancel"
+  "unfollow.cancel": "Cancel",
+  "multiple": "複数削除"
 }

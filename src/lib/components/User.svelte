@@ -2,35 +2,47 @@
 	import { getProfile } from '$lib/utils/nostr';
 	import { datetime, formatAbsoluteDate, formatRelativeDate } from '$lib/utils/util';
 	import * as Nostr from 'nostr-typedef';
-	import { Button, Dropdown, DropdownLi, DropdownUl, Modal, uiHelpers } from 'svelte-5-ui-lib';
+	import {
+		Button,
+		Checkbox,
+		Dropdown,
+		DropdownLi,
+		DropdownUl,
+		Modal,
+		uiHelpers
+	} from 'svelte-5-ui-lib';
 	import { DotsVerticalOutline, ExclamationCircleOutline } from 'flowbite-svelte-icons';
 
 	import ModalUserDetail from './ModalUserDetail.svelte';
 	import { sineIn } from 'svelte/easing';
 	import { nip19 } from 'nostr-tools';
-	import { dontCheckFollowState } from '$lib/store/store';
+	import {
+		deleteList,
+		dontCheckFollowState,
+		followStateMap,
+		kind0Events,
+		kind1Events,
+		multiple
+	} from '$lib/store/store';
 	import { _ } from 'svelte-i18n';
 	import { locale } from 'svelte-i18n';
+	import UserLayout from './UserLayout.svelte';
 
 	let {
 		pubkey,
-		kind0,
-		isFollower,
-		kind1,
 
 		handleDelete
 	}: {
 		pubkey: string;
 
-		kind0: Nostr.Event | undefined;
-		kind1: Nostr.Event | undefined;
-		isFollower: boolean | undefined;
 		handleDelete: (pubkey: string) => void;
 	} = $props();
 	//userの
 	//kind0 表示と
 	//kind3 自分が含まれるか
 	//最新の kind1 表示
+	let kind0 = $derived($kind0Events.get(pubkey)?.event);
+
 	const profile = $derived(getProfile(kind0));
 
 	let dropdown = uiHelpers();
@@ -87,68 +99,29 @@
 	$effect(() => {
 		modalDeleteStatus = modalDeletePopup.isOpen;
 	});
-	let encodedPub = $derived.by(() => {
-		try {
-			return nip19.npubEncode(pubkey);
-		} catch (error) {
-			return undefined;
+
+	const handleClickCheck = (e: Event) => {
+		//	console.log((e.target as HTMLInputElement)?.checked);
+		if ((e.target as HTMLInputElement)?.checked) {
+			$deleteList.push(pubkey);
+		} else {
+			$deleteList = $deleteList.filter((pub) => pub !== pubkey);
 		}
-	});
+		$deleteList = $deleteList;
+	};
 </script>
 
-<div class="grid w-full grid-cols-[auto_1fr_auto] p-1">
-	<div>
-		<div class="relative mr-1 mt-1 h-16 w-16">
-			<div class="absolute h-16 w-16 overflow-hidden rounded-lg border border-secondary-600">
-				{#if kind0}
-					{#if profile?.picture && profile?.picture !== ''}
-						<img
-							src={profile?.picture}
-							alt="Avatar"
-							class="absolute overflow-hidden object-cover"
-							style="height: 100%; width: 100%; object-fit: cover; object-position: center;"
-						/>{:else}<div class="flex h-full items-center justify-center text-center">
-							no<br />Avatar
-						</div>{/if}{:else}<div class="flex h-full items-center justify-center text-center">
-						?
-					</div>{/if}
-			</div>
-			{#if !$dontCheckFollowState}<div
-					class="align-center absolute -left-1 -top-1 z-10 flex h-6 w-6 items-center justify-center overflow-visible rounded-full border border-secondary-600 bg-white"
-				>
-					{#if isFollower}🫂{:else if isFollower === false}😐{:else}❔️{/if}
-				</div>{/if}
-		</div>
-	</div>
-	<div class="flex flex-col">
-		<div
-			class=" whitespace-pre-wrap break-words text-secondary-600"
-			style="word-break: break-word;"
-		>
-			{#if kind0}
-				{profile?.display_name ?? ''}@{profile?.name && profile.name !== ''
-					? profile.name
-					: 'noname'}
-			{:else}
-				<span class="text-xs">{encodedPub}</span>
-			{/if}
-		</div>
-		{#if kind1}<div class="font-bold">
-				latest note at
-				<time class=" inline-flex" datetime={datetime(kind1.created_at)}
-					>{formatAbsoluteDate(kind1.created_at)}</time
-				>
-				( {formatRelativeDate(kind1.created_at, $locale)} )
-			</div>
-			<div class="my-1 whitespace-pre-wrap break-words" style="word-break: break-word;">
-				{kind1.content}
-			</div>{/if}
-	</div>
+<div class="grid w-full grid-cols-[1fr_auto] p-1">
+	<UserLayout {pubkey} />
 	<div>
 		<div class="flex items-start justify-center">
-			<Button onclick={dropdown.toggle} pill={true} class=" !p-1.5" color="secondary"
-				><DotsVerticalOutline class="dots-menu cursor-pointer dark:text-white" /></Button
-			>
+			{#if $multiple}
+				<Checkbox onchange={handleClickCheck} style="min-height:24px;min-width:24px;" />
+				<!---->
+			{:else}
+				<Button onclick={dropdown.toggle} pill={true} class=" !p-1.5" color="secondary"
+					><DotsVerticalOutline class="dots-menu cursor-pointer dark:text-white" /></Button
+				>{/if}
 			<div class="relative">
 				<Dropdown
 					{dropdownStatus}
@@ -171,7 +144,7 @@
 	</div>
 </div>
 <Modal title={modalTitle} {modalStatus} {closeModal}>
-	<ModalUserDetail {kind0} {profile} {kind1} {isFollower} />
+	<ModalUserDetail {pubkey} />
 </Modal>
 <Modal size="xs" modalStatus={modalDeleteStatus} closeModal={closeDeleteModal}>
 	<div class="text-center">

@@ -1,8 +1,14 @@
 <script lang="ts">
 	import User from './User.svelte';
 
-	import { dontCheckFollowState, followStateMap, kind0Events, kind1Events } from '$lib/store/store';
-	import { Button, Select } from 'svelte-5-ui-lib';
+	import {
+		dontCheckFollowState,
+		followStateMap,
+		kind0Events,
+		kind1Events,
+		multiple
+	} from '$lib/store/store';
+	import { Button, Select, Toggle } from 'svelte-5-ui-lib';
 
 	import { CaretUpSolid, CaretDownSolid } from 'flowbite-svelte-icons';
 	import { _ } from 'svelte-i18n';
@@ -86,8 +92,16 @@
 	});
 </script>
 
-<div class="mt-4 rounded-md border border-secondary-500 p-1">
-	<div class="flex items-center justify-between">
+<div class="my-2 flex w-full justify-end">
+	<Toggle
+		onchange={() => ($multiple = !$multiple)}
+		checked={$multiple}
+		spanClass="border border-primary-400 after:top-[1px]"
+		labelClass=" break-wards font-bold">{$_('multiple')}</Toggle
+	>
+</div>
+<div class="rounded-md border border-secondary-500 p-1">
+	<div class="flex flex-wrap items-center justify-between">
 		<div>
 			<span class="font-bold">{$_('followCount')}</span>:
 			{followList.length}
@@ -100,7 +114,8 @@
 					(pub) => $followStateMap.get(pub) === undefined
 				).length}{/if}
 		</div>
-		<div class="flex gap-1">
+
+		<div class="ml-auto flex gap-1">
 			<Select id="sort" bind:value={sortSelected} placeholder="sort">
 				{#each sortType as { value, name }}
 					<option {value}>{name}</option>
@@ -116,13 +131,7 @@
 		<ul class="w-full divide-y divide-secondary-200 overflow-x-hidden">
 			{#each sortedFollowList as pubkey}
 				<li>
-					<User
-						{handleDelete}
-						{pubkey}
-						kind0={$kind0Events.get(pubkey)?.event}
-						isFollower={$followStateMap.get(pubkey)}
-						kind1={$kind1Events.get(pubkey)?.event}
-					/>
+					<User {handleDelete} {pubkey} />
 				</li>
 			{/each}
 		</ul>{/if}

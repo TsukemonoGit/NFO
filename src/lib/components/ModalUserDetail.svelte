@@ -1,21 +1,13 @@
 <script lang="ts">
-	import * as Nostr from 'nostr-typedef';
-	import type { Profile } from '../../types/types';
 	import { NIP05_REGEX } from 'nostr-tools/nip05';
-	import { npubEncode } from 'nostr-tools/nip19';
 	import { nip19 } from 'nostr-tools';
+	import { kind0Events, followStateMap } from '$lib/store/store';
+	import { getProfile } from '$lib/utils/nostr';
 
-	let {
-		kind0,
-		kind1,
-		isFollower,
-		profile
-	}: {
-		kind0: Nostr.Event | undefined;
-		kind1: Nostr.Event | undefined;
-		isFollower: boolean | undefined;
-		profile: Profile | undefined;
-	} = $props();
+	let { pubkey } = $props<{ pubkey: string }>();
+	let kind0 = $derived($kind0Events.get(pubkey)?.event);
+	let isFollower = $derived($followStateMap.get(pubkey));
+	let profile = $derived(getProfile(kind0));
 
 	const nip05href = (str: string): undefined | string => {
 		if (!NIP05_REGEX.test(str)) {
@@ -41,8 +33,8 @@
 		'lud16',
 		'lud06'
 	];
-	const otherProfile = Object.fromEntries(
-		Object.entries(profile || {}).filter(([key]) => !excludedKeys.includes(key))
+	let otherProfile = $derived(
+		Object.fromEntries(Object.entries(profile || {}).filter(([key]) => !excludedKeys.includes(key)))
 	);
 	//console.log(otherProfile);
 </script>

@@ -1,6 +1,6 @@
 import type { Nip07ExtensionSigner, Nip46RemoteSigner } from 'nostr-signer-connector';
 import type { EventPacket, EventVerifier } from 'rx-nostr';
-import { derived, readable, writable, type Readable, type Writable } from 'svelte/store';
+import { derived, get, readable, writable, type Readable, type Writable } from 'svelte/store';
 import * as Nostr from 'nostr-tools';
 import { SvelteMap } from 'svelte/reactivity';
 
@@ -29,3 +29,14 @@ export const followStateMap: Readable<Map<string, boolean>> = derived(
 		return map; // ここでは普通の `Map` を返す
 	}
 );
+
+export const multiple = writable<boolean>(false);
+
+export const deleteList = writable<string[]>([]);
+multiple.subscribe((value) => {
+	if (!value) {
+		deleteList.set([]);
+	}
+});
+
+export let kind3Event = writable<Nostr.Event>();

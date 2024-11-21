@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import { LOGIN } from '$lib/store/constants';
-	import { loading, signer, verifier } from '$lib/store/store';
+	import { loading, multiple, signer, verifier } from '$lib/store/store';
 	import {
 		Nip07ExtensionSigner,
 		type Nip07Extension,
@@ -18,6 +18,7 @@
 		type VerificationServiceClient
 	} from 'rx-nostr-crypto';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
+	import MultipleFixedWindow from '$lib/components/MultipleFixedWindow.svelte';
 
 	let { children } = $props();
 
