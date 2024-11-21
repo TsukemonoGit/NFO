@@ -12,7 +12,7 @@
 	} from '$lib/utils/rxnostr';
 	import { hexRegex } from '$lib/utils/regex';
 	import FolloweeData from './FolloweeData.svelte';
-	import { loading, signer, user } from '$lib/store/store';
+	import { kind3Event, loading, multiple, signer, user } from '$lib/store/store';
 	import type { EventParameters } from 'nostr-typedef';
 	import { getEventHash, type EventTemplate } from 'nostr-tools';
 	import { Modal, uiHelpers } from 'svelte-5-ui-lib';
@@ -20,8 +20,8 @@
 	import { writable } from 'svelte/store';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { _ } from 'svelte-i18n';
+	import MultipleFixedWindow from './MultipleFixedWindow.svelte';
 
-	let kind3Event = $state<Nostr.Event>();
 	const kind10002filters = $derived<Nostr.Filter[]>([
 		{ authors: [$user as string], kinds: [10002], until: now(), limit: 1 }
 	]);
@@ -57,9 +57,10 @@
 			$loading = false;
 			return;
 		}
-		kind3Event = kind3;
-		followList = kind3Event.tags
-			.filter((tag) => tag[0] === 'p' && hexRegex.test(tag[1]))
+		$kind3Event = kind3;
+		followList = $state
+			.snapshot($kind3Event)
+			.tags.filter((tag) => tag[0] === 'p' && hexRegex.test(tag[1]))
 			.map((tag) => tag[1]);
 		getUserEvents(followList);
 	});
@@ -101,17 +102,16 @@
 			console.log('error');
 			return;
 		}
+		const snapshotKind3 = $state.snapshot($kind3Event);
 		// let tags = kind3Event
 		// 	? structuredClone(kind3Event.tags.map((tag) => (Array.isArray(tag) ? [...tag] : tag)))
 		// 	: [];
 		// tags = tags.filter((tag) => !(tag[0] === 'p' && tag[1] === pubkey));
-		const tags = $state
-			.snapshot(kind3Event)
-			.tags.filter((tag) => !(tag[0] === 'p' && tag[1] === pubkey));
+		const tags = snapshotKind3.tags.filter((tag) => !(tag[0] === 'p' && tag[1] === pubkey));
 		// kind3Event
 		//		? structuredClone(kind3Event.tags.map((tag) => (Array.isArray(tag) ? [...tag] : tag)))
 		//	: [];
-		console.log(tags);
+		//console.log(tags);
 		let newKind3: {
 			kind: number;
 			tags: string[][];
@@ -123,7 +123,7 @@
 		} = {
 			kind: 3,
 			tags: tags,
-			content: kind3Event.content ?? '',
+			content: snapshotKind3.content ?? '',
 			created_at: now(),
 			pubkey: $user as string
 		};
@@ -194,10 +194,11 @@
 					}
 				});
 				if (isSuccessRelays.length > 0) {
-					kind3Event = resEvent;
+					$kind3Event = resEvent;
 
-					followList = kind3Event.tags
-						.filter((tag) => tag[0] === 'p' && hexRegex.test(tag[1]))
+					followList = $state
+						.snapshot($kind3Event)
+						.tags.filter((tag) => tag[0] === 'p' && hexRegex.test(tag[1]))
 						.map((tag) => tag[1]);
 				}
 			} catch (error) {
@@ -216,7 +217,7 @@
 	};
 </script>
 
-{#if !kind3Event}
+{#if !$kind3Event}
 	loading...
 {:else if followList.length === 0 && !$loading}
 	{$_('follow_zero')}
@@ -231,3 +232,6 @@
 		sign={true}
 	/>
 </Modal>
+{#if $multiple}
+	<MultipleFixedWindow bind:followList />
+{/if}
