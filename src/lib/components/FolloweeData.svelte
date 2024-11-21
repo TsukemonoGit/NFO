@@ -32,7 +32,7 @@
 	// });
 
 	//sort
-	let sortedFollowList = $state<string[]>(followList);
+
 	let sortSelected: string | undefined = $state('default');
 	const sortType: SortType[] = [
 		{ value: 'default', name: $_('sortType.default') },
@@ -43,26 +43,26 @@
 	}
 	let ascending = $state(false);
 
-	$effect(() => {
-		console.log(sortSelected);
+	const sortedFollowList = $derived.by(() => {
+		//console.log(sortSelected);
 		switch (sortSelected) {
 			case 'default':
 				// デフォルト順序
 				if (ascending) {
-					sortedFollowList = followList.slice(); // 元の順序
+					return followList.slice(); // 元の順序
 				} else {
-					sortedFollowList = followList.slice().reverse(); // 逆順
+					return followList.slice().reverse(); // 逆順
 				}
 				break;
 			case 'note':
 				// `created_at` に基づいて並べ替え
 				if (ascending) {
-					sortedFollowList = Array.from($kind1Events.values())
+					return Array.from($kind1Events.values())
 						.filter((ev) => followList.includes(ev.event.pubkey))
 						.sort((a, b) => a.event.created_at - b.event.created_at)
 						.map((ev) => ev.event.pubkey); //.filter((value)=>followList.includes(value));
 				} else {
-					sortedFollowList = Array.from($kind1Events.values())
+					return Array.from($kind1Events.values())
 						.filter((ev) => followList.includes(ev.event.pubkey))
 						.sort((a, b) => b.event.created_at - a.event.created_at)
 						.map((ev) => ev.event.pubkey);
@@ -70,7 +70,7 @@
 				break;
 			case 'followStatus':
 				// フォロー状態に基づいて並べ替え
-				sortedFollowList = followList.slice().sort((a, b) => {
+				return followList.slice().sort((a, b) => {
 					// ステータスを明確に数値化
 					const statusToValue = (status: boolean | undefined) => {
 						if (status === true) return 2; // true を 2
