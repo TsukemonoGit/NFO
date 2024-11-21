@@ -138,7 +138,7 @@
 
 <div class="h-42 fixed bottom-0 left-1/2 w-60 -translate-x-1/2">
 	<div
-		class="flex h-full w-full items-center justify-center gap-2 rounded-md bg-secondary-200 p-2 font-bold opacity-60 hover:opacity-100"
+		class="flex h-full w-full items-center justify-center gap-2 rounded-md bg-secondary-200 p-2 font-bold"
 	>
 		<div>
 			Selected: <span class=" text-secondary-700">{$deleteList.length}</span>
