@@ -6,7 +6,7 @@
 		const shareData = {
 			title: 'Nostr Follow Organizer',
 			//text: '[Nostr Follow Organizer]',
-			url: $page.url.origin
+			url: $page.url.href
 		};
 
 		try {
