@@ -19,6 +19,7 @@
 	} from 'rx-nostr-crypto';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import MultipleFixedWindow from '$lib/components/MultipleFixedWindow.svelte';
+	import Header from './Header.svelte';
 
 	let { children } = $props();
 
@@ -54,6 +55,7 @@
 </script>
 
 <div class="app">
+	<Header />
 	<main>
 		{@render children()}
 	</main>
@@ -80,7 +82,7 @@
 		flex: 1;
 		display: flex;
 		flex-direction: column;
-		padding: 0.5rem;
+		padding: 0 0.5rem;
 		width: 100%;
 		max-width: 64rem;
 		margin: 0 auto;
