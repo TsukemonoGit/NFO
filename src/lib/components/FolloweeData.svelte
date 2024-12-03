@@ -1,13 +1,7 @@
 <script lang="ts">
 	import User from './User.svelte';
 
-	import {
-		dontCheckFollowState,
-		followStateMap,
-		kind0Events,
-		kind1Events,
-		multiple
-	} from '$lib/store/store';
+	import { dontCheckFollowState, followStateMap, kind1Events, multiple } from '$lib/store/store';
 	import { Button, Select, Toggle } from 'svelte-5-ui-lib';
 
 	import { CaretUpSolid, CaretDownSolid } from 'flowbite-svelte-icons';
@@ -83,8 +77,8 @@
 						if (status === false) return 1; // false を 1
 						return 0; // undefined を 0
 					};
-					const aStatus = statusToValue($followStateMap.get(a));
-					const bStatus = statusToValue($followStateMap.get(b));
+					const aStatus = statusToValue($followStateMap.get(a)?.follow);
+					const bStatus = statusToValue($followStateMap.get(b)?.follow);
 					return ascending ? aStatus - bStatus : bStatus - aStatus;
 				});
 				break;
@@ -109,7 +103,7 @@
 					(pub) => $followStateMap.get(pub)
 				).length}
 				<span class="ml-2 font-bold">{$_('UnilateralFollow')}😐</span>: {followList.filter(
-					(pub) => $followStateMap.get(pub) === false
+					(pub) => $followStateMap.get(pub)?.follow === false
 				).length}<span class="ml-2 font-bold">{$_('unknown')}❔️</span>: {followList.filter(
 					(pub) => $followStateMap.get(pub) === undefined
 				).length}{/if}

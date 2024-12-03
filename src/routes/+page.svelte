@@ -11,7 +11,7 @@
 	import { writable } from 'svelte/store';
 
 	const modalExample = uiHelpers();
-	let modalStatus = $state(false);
+	let modalStatus = $derived(modalExample.isOpen);
 	//let publicKey = $state<string>();
 	//const closeModal = modalExample.close;
 	const encodedPub = writable<string>();
@@ -22,9 +22,6 @@
 
 		modalExample.close();
 	};
-	$effect(() => {
-		modalStatus = modalExample.isOpen;
-	});
 
 	const onClickGetPubkey = async () => {
 		$encodedPub = '';

@@ -4,9 +4,10 @@
 	import { kind0Events, followStateMap } from '$lib/store/store';
 	import { getProfile } from '$lib/utils/nostr';
 
-	let { pubkey } = $props<{ pubkey: string }>();
+	let { pubkey, modalTitle } = $props<{ pubkey: string; modalTitle: string }>();
 	let kind0 = $derived($kind0Events.get(pubkey)?.event);
-	let isFollower = $derived($followStateMap.get(pubkey));
+	let isFollower = $derived($followStateMap.get(pubkey)?.follow);
+	let petname = $derived($followStateMap.get(pubkey)?.petname);
 	let profile = $derived(getProfile(kind0));
 
 	const nip05href = (str: string): undefined | string => {
@@ -61,25 +62,18 @@
 				{#if isFollower}🫂{:else if isFollower === false}😐{:else}❔️{/if}
 			</div>
 			<div class=" overflow-y-auto overflow-x-hidden p-1">
-				<!-- {#if profile.banner}
-					<div
-						class="bg-magnum-800 border-magnum-400 pointer-events-none fixed w-full overflow-hidden border-b opacity-10"
-					>
-						<img
-							src={profile.banner}
-							alt="banner"
-							class="mx-auto max-w-2xl overflow-hidden object-cover"
-							style="height: 15rem;  object-fit: cover; object-position: center;"
-							loading="lazy"
-						/>
-					</div>{/if} -->
 				<div
-					class=" whitespace-pre-wrap break-words rounded-md border border-secondary-500 p-1"
+					class=" mb-1 whitespace-pre-wrap break-words rounded-md border border-secondary-500 p-1"
 					style="word-break: break-word;"
 				>
 					{profile?.about?.trim()}
 				</div>
-
+				{#if petname}
+					<span class=" font-bold"
+						>Named you <span class="rounded-md bg-secondary-200 p-1">"{petname}"</span>as
+						petname(nickname).</span
+					>
+				{/if}
 				{#if profile?.nip05}
 					{@const nostrjson = nip05href(profile?.nip05)}
 					{#if nostrjson}
