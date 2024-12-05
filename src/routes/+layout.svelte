@@ -18,7 +18,7 @@
 		type VerificationServiceClient
 	} from 'rx-nostr-crypto';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
-	import MultipleFixedWindow from '$lib/components/MultipleFixedWindow.svelte';
+
 	import Header from './Header.svelte';
 
 	let { children } = $props();

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { getProfile } from '$lib/utils/nostr';
-	import { datetime, formatAbsoluteDate, formatRelativeDate } from '$lib/utils/util';
-	import * as Nostr from 'nostr-typedef';
+
 	import {
 		Button,
 		Checkbox,
@@ -16,16 +15,9 @@
 	import ModalUserDetail from './ModalUserDetail.svelte';
 	import { sineIn } from 'svelte/easing';
 	import { nip19 } from 'nostr-tools';
-	import {
-		deleteList,
-		dontCheckFollowState,
-		followStateMap,
-		kind0Events,
-		kind1Events,
-		multiple
-	} from '$lib/store/store';
+	import { deleteList, kind0Events, multiple } from '$lib/store/store';
 	import { _ } from 'svelte-i18n';
-	import { locale } from 'svelte-i18n';
+
 	import UserLayout from './UserLayout.svelte';
 
 	let {
@@ -58,12 +50,12 @@
 		{ name: 'delete', value: $_('dropdownMenu.delete') }
 	];
 	const modalUserDetail = uiHelpers();
-	let modalStatus = $state(false);
+	let modalStatus = $derived(modalUserDetail.isOpen);
 
 	const closeModal = modalUserDetail.close;
-	$effect(() => {
-		modalStatus = modalUserDetail.isOpen;
-	});
+	// $effect(() => {
+	// 	modalStatus = modalUserDetail.isOpen;
+	// });
 
 	const modalTitle = $derived(
 		`${profile?.display_name ?? ''}@${profile?.name && profile.name !== '' ? profile.name : 'noname'}`
@@ -144,7 +136,7 @@
 	</div>
 </div>
 <Modal title={modalTitle} {modalStatus} {closeModal}>
-	<ModalUserDetail {pubkey} />
+	<ModalUserDetail {pubkey} {modalTitle} />
 </Modal>
 <Modal size="xs" modalStatus={modalDeleteStatus} closeModal={closeDeleteModal}>
 	<div class="text-center">

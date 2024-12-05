@@ -17,5 +17,6 @@
   "unfollow.text": "Are you sure you want to unfollow this user?",
   "unfollow.sure": "Yes, I'm sure",
   "unfollow.cancel": "No, cancel",
-  "multiple": "Multiple Delete"
+  "multiple": "Multiple Delete",
+  "sortType.petname": "Petname Order"
 }

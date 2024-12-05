@@ -16,19 +16,23 @@ export const kind1Events = writable<SvelteMap<string, EventPacket>>(new SvelteMa
 export const dontCheckFollowState = writable<boolean>(false);
 export const user = writable<string | undefined>();
 
-export const followStateMap: Readable<Map<string, boolean>> = derived(
-	[kind3Events, user],
-	([$kind3Events, $user]) => {
-		const map = new Map<string, boolean>(); // 普通の `Map`
-		$kind3Events.forEach((ev) => {
-			const isMutualFollow = ev.event.tags.some(
-				(tag: string[]) => tag[0] === 'p' && tag[1] === $user
-			);
-			map.set(ev.event.pubkey, isMutualFollow);
+export const followStateMap: Readable<
+	Map<string, { follow: boolean; petname: string | undefined }>
+> = derived([kind3Events, user], ([$kind3Events, $user]) => {
+	const map = new Map<string, { follow: boolean; petname: string | undefined }>(); // 普通の `Map`
+	$kind3Events.forEach((ev) => {
+		const follow = ev.event.tags.find((tag: string[]) => tag[0] === 'p' && tag[1] === $user);
+		map.set(ev.event.pubkey, {
+			follow: follow ? true : false,
+			petname: follow && follow.length > 3 && follow[3] !== '' ? follow[3] : undefined
 		});
-		return map; // ここでは普通の `Map` を返す
-	}
-);
+		// const isMutualFollow = ev.event.tags.some(
+		// 	(tag: string[]) => tag[0] === 'p' && tag[1] === $user
+		// );
+		// map.set(ev.event.pubkey, isMutualFollow);
+	});
+	return map; // ここでは普通の `Map` を返す
+});
 
 export const multiple = writable<boolean>(false);
 

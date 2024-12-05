@@ -10,6 +10,8 @@
 	let kind0 = $derived($kind0Events.get(pubkey)?.event);
 	let isFollower = $derived($followStateMap.get(pubkey));
 	let kind1 = $derived($kind1Events.get(pubkey)?.event);
+	let petname = $derived($followStateMap.get(pubkey)?.petname);
+
 	const profile = $derived(getProfile(kind0));
 </script>
 
@@ -38,6 +40,11 @@
 		<div class=" text-secondary-600">
 			{profile?.display_name ?? ''}@{profile?.name && profile.name !== '' ? profile.name : 'noname'}
 		</div>
+		{#if petname}
+			<span class=" font-bold"
+				>Named you "<span class="rounded-md bg-secondary-200 p-1">{petname}</span>" (petname)</span
+			>
+		{/if}
 		{#if kind1}<div class="font-bold">
 				latest note at
 				<time class=" inline-flex" datetime={datetime(kind1.created_at)}

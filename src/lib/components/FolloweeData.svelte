@@ -1,13 +1,7 @@
 <script lang="ts">
 	import User from './User.svelte';
 
-	import {
-		dontCheckFollowState,
-		followStateMap,
-		kind0Events,
-		kind1Events,
-		multiple
-	} from '$lib/store/store';
+	import { dontCheckFollowState, followStateMap, kind1Events, multiple } from '$lib/store/store';
 	import { Button, Select, Toggle } from 'svelte-5-ui-lib';
 
 	import { CaretUpSolid, CaretDownSolid } from 'flowbite-svelte-icons';
@@ -42,7 +36,8 @@
 	let sortSelected: string | undefined = $state('default');
 	const sortType: SortType[] = [
 		{ value: 'default', name: $_('sortType.default') },
-		{ value: 'note', name: $_('sortType.note') }
+		{ value: 'note', name: $_('sortType.note') },
+		{ value: 'petname', name: $_('sortType.petname') }
 	];
 	if (!$dontCheckFollowState) {
 		sortType.push({ value: 'followStatus', name: $_('sortType.followStatus') });
@@ -59,7 +54,7 @@
 				} else {
 					return followList.slice().reverse(); // 逆順
 				}
-				break;
+			//	break;
 			case 'note':
 				// `created_at` に基づいて並べ替え
 				if (ascending) {
@@ -73,7 +68,7 @@
 						.sort((a, b) => b.event.created_at - a.event.created_at)
 						.map((ev) => ev.event.pubkey);
 				}
-				break;
+			//		break;
 			case 'followStatus':
 				// フォロー状態に基づいて並べ替え
 				return followList.slice().sort((a, b) => {
@@ -83,11 +78,23 @@
 						if (status === false) return 1; // false を 1
 						return 0; // undefined を 0
 					};
-					const aStatus = statusToValue($followStateMap.get(a));
-					const bStatus = statusToValue($followStateMap.get(b));
+					const aStatus = statusToValue($followStateMap.get(a)?.follow);
+					const bStatus = statusToValue($followStateMap.get(b)?.follow);
 					return ascending ? aStatus - bStatus : bStatus - aStatus;
 				});
-				break;
+			//break;
+
+			case 'petname':
+			//ペットネーム順で並べ替え
+			case 'petname':
+				// ペットネーム順で並べ替え
+				return followList.slice().sort((a, b) => {
+					const aPetname = $followStateMap.get(a)?.petname || ''; // undefined を空文字列扱い
+					const bPetname = $followStateMap.get(b)?.petname || '';
+					return ascending
+						? aPetname.localeCompare(bPetname) // 昇順
+						: bPetname.localeCompare(aPetname); // 降順
+				});
 		}
 	});
 </script>
@@ -109,7 +116,7 @@
 					(pub) => $followStateMap.get(pub)
 				).length}
 				<span class="ml-2 font-bold">{$_('UnilateralFollow')}😐</span>: {followList.filter(
-					(pub) => $followStateMap.get(pub) === false
+					(pub) => $followStateMap.get(pub)?.follow === false
 				).length}<span class="ml-2 font-bold">{$_('unknown')}❔️</span>: {followList.filter(
 					(pub) => $followStateMap.get(pub) === undefined
 				).length}{/if}
