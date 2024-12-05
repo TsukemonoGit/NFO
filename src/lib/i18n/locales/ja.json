@@ -17,5 +17,6 @@
   "unfollow.text": "ユーザーをアンフォローしていいですか？",
   "unfollow.sure": "OK",
   "unfollow.cancel": "Cancel",
-  "multiple": "複数削除"
+  "multiple": "複数削除",
+  "sortType.petname": "ニックネーム順"
 }

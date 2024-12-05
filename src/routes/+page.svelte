@@ -9,12 +9,13 @@
 	import { toast } from '@zerodevx/svelte-toast';
 	import { _ } from 'svelte-i18n';
 	import { writable } from 'svelte/store';
+	import { untrack } from 'svelte';
 
 	const modalExample = uiHelpers();
 	let modalStatus = $derived(modalExample.isOpen);
 	//let publicKey = $state<string>();
 	//const closeModal = modalExample.close;
-	const encodedPub = writable<string>();
+	let encodedPub = $state('');
 	const closeModal = () => {
 		modalExample.toggle();
 
@@ -24,7 +25,7 @@
 	};
 
 	const onClickGetPubkey = async () => {
-		$encodedPub = '';
+		encodedPub = '';
 		if (!$signer) {
 			modalExample.toggle();
 		} else {
@@ -32,7 +33,7 @@
 				$loading = true;
 
 				const hexPublicKey = await $signer.getPublicKey();
-				$encodedPub = nip19.npubEncode(hexPublicKey);
+				encodedPub = nip19.npubEncode(hexPublicKey);
 			} catch (error) {
 				console.log(error);
 				toast.push('failed to set signer', {
@@ -58,11 +59,12 @@
 			}
 		}
 	};
-	encodedPub.subscribe((pub) => {
-		console.log(pub);
-		$user = toHex(pub);
-		console.log($encodedPub);
-		console.log($user);
+	$effect(() => {
+		if (encodedPub) {
+			untrack(() => {
+				$user = toHex(encodedPub);
+			});
+		}
 	});
 </script>
 
@@ -79,7 +81,7 @@
 
 <section class=" my-4 gap-2">
 	<div class="flex gap-2">
-		<Input bind:value={$encodedPub} placeholder="npub..." />
+		<Input bind:value={encodedPub} placeholder="npub..." />
 		<Button onclick={() => onClickGetPubkey()}>Get Publickey</Button><Button
 			color="secondary"
 			onclick={() => {

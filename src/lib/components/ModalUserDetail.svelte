@@ -1,13 +1,16 @@
 <script lang="ts">
 	import { NIP05_REGEX } from 'nostr-tools/nip05';
 	import { nip19 } from 'nostr-tools';
-	import { kind0Events, followStateMap } from '$lib/store/store';
+	import { kind0Events, followStateMap, kind3Events } from '$lib/store/store';
 	import { getProfile } from '$lib/utils/nostr';
 
-	let { pubkey, modalTitle } = $props<{ pubkey: string; modalTitle: string }>();
+	let { pubkey } = $props<{ pubkey: string; modalTitle: string }>();
 	let kind0 = $derived($kind0Events.get(pubkey)?.event);
 	let isFollower = $derived($followStateMap.get(pubkey)?.follow);
 	let petname = $derived($followStateMap.get(pubkey)?.petname);
+	let followLength = $derived(
+		$kind3Events.get(pubkey)?.event.tags.filter((tag) => tag[0] === 'p').length
+	);
 	let profile = $derived(getProfile(kind0));
 
 	const nip05href = (str: string): undefined | string => {
@@ -74,11 +77,17 @@
 						petname(nickname).</span
 					>
 				{/if}
+				{#if followLength}
+					<div class="flex flex-wrap items-center">
+						<span class=" mr-2 font-bold">Following: </span>
+						{followLength}
+					</div>
+				{/if}
 				{#if profile?.nip05}
 					{@const nostrjson = nip05href(profile?.nip05)}
 					{#if nostrjson}
 						<div class=" whitespace-pre-wrap break-words" style="word-break: break-word;">
-							<span class="font-bold">nip-05</span>:<a
+							<span class="font-bold">nip05</span>:<a
 								href={nostrjson}
 								target="_blank"
 								rel="noopener noreferrer"

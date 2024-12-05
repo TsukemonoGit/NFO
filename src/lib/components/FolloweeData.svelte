@@ -36,7 +36,8 @@
 	let sortSelected: string | undefined = $state('default');
 	const sortType: SortType[] = [
 		{ value: 'default', name: $_('sortType.default') },
-		{ value: 'note', name: $_('sortType.note') }
+		{ value: 'note', name: $_('sortType.note') },
+		{ value: 'petname', name: $_('sortType.petname') }
 	];
 	if (!$dontCheckFollowState) {
 		sortType.push({ value: 'followStatus', name: $_('sortType.followStatus') });
@@ -53,7 +54,7 @@
 				} else {
 					return followList.slice().reverse(); // 逆順
 				}
-				break;
+			//	break;
 			case 'note':
 				// `created_at` に基づいて並べ替え
 				if (ascending) {
@@ -67,7 +68,7 @@
 						.sort((a, b) => b.event.created_at - a.event.created_at)
 						.map((ev) => ev.event.pubkey);
 				}
-				break;
+			//		break;
 			case 'followStatus':
 				// フォロー状態に基づいて並べ替え
 				return followList.slice().sort((a, b) => {
@@ -81,7 +82,19 @@
 					const bStatus = statusToValue($followStateMap.get(b)?.follow);
 					return ascending ? aStatus - bStatus : bStatus - aStatus;
 				});
-				break;
+			//break;
+
+			case 'petname':
+			//ペットネーム順で並べ替え
+			case 'petname':
+				// ペットネーム順で並べ替え
+				return followList.slice().sort((a, b) => {
+					const aPetname = $followStateMap.get(a)?.petname || ''; // undefined を空文字列扱い
+					const bPetname = $followStateMap.get(b)?.petname || '';
+					return ascending
+						? aPetname.localeCompare(bPetname) // 昇順
+						: bPetname.localeCompare(aPetname); // 降順
+				});
 		}
 	});
 </script>
