@@ -12,11 +12,11 @@
 	import { page } from '$app/stores';
 	import { toast } from '@zerodevx/svelte-toast';
 
-	const relayUrls = ['wss://relay.nsec.app/'];
+	const relayUrls = ['wss://relay.nsec.app/', 'wss://nos.lol', 'wss://relay.nostr.wirednet.jp'];
 	const client: Nip46ClientMetadata = {
-		name: 'svelte5SampleClient',
+		name: 'NFO',
 		url: $page.url.origin,
-		description: 'just a sample'
+		description: 'nostr follow organizer'
 	};
 
 	// const eventParam = {
