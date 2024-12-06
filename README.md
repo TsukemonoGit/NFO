@@ -5,6 +5,10 @@ En
 
 It retrieves a user's following list and displays information such as the time of their most recent post and whether or not they are following each other. There is also a sorting function, so you can easily organize your following, such as people who haven't posted recently.
 
+
+
+You can now check what nicknames others have given you. (NIP-02 Petname)
+
 ---
 Ja
 
@@ -12,10 +16,11 @@ Ja
 
 ソート機能もあるので、最近投稿がない人のフォローなど、簡単に整理することができます。
 
+自分が相手からどんなニックネームを付けられているか確認できるようになりました。(NIP-02 Petname)
 
 ------
 ![screenshot](./images/screenshot.png)
-
+![screenshot](./images/screenshot2.png)
 ------
 # sv
 
