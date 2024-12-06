@@ -7,7 +7,7 @@
 
 	let { pubkey } = $props<{ pubkey: string }>();
 	let kind0 = $derived(kind0Events.get().get(pubkey)?.event);
-	let isFollower = $derived($followStateMap.get(pubkey));
+	let isFollower = $derived($followStateMap.get(pubkey)?.follow);
 	let kind1 = $derived($kind1Events.get(pubkey)?.event);
 	let petname = $derived($followStateMap.get(pubkey)?.petname);
 
