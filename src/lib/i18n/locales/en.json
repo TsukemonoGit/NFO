@@ -18,5 +18,6 @@
   "unfollow.sure": "Yes, I'm sure",
   "unfollow.cancel": "No, cancel",
   "multiple": "Multiple Delete",
-  "sortType.petname": "Petname Order"
+  "sortType.petname": "Petname Order",
+  "sortType.name": "Name Sort"
 }

@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { NIP05_REGEX } from 'nostr-tools/nip05';
 	import { nip19 } from 'nostr-tools';
-	import { kind0Events, followStateMap, kind3Events } from '$lib/store/store';
+	import { followStateMap, kind3Events } from '$lib/store/store';
+	import { kind0Events } from '$lib/store/runes.svelte';
 	import { getProfile } from '$lib/utils/nostr';
 
 	let { pubkey } = $props<{ pubkey: string; modalTitle: string }>();
-	let kind0 = $derived($kind0Events.get(pubkey)?.event);
+	let kind0 = $derived(kind0Events.get().get(pubkey)?.event);
 	let isFollower = $derived($followStateMap.get(pubkey)?.follow);
 	let petname = $derived($followStateMap.get(pubkey)?.petname);
 	let followLength = $derived(

@@ -15,10 +15,11 @@
 	import ModalUserDetail from './ModalUserDetail.svelte';
 	import { sineIn } from 'svelte/easing';
 	import { nip19 } from 'nostr-tools';
-	import { deleteList, kind0Events, multiple } from '$lib/store/store';
+	import { deleteList, multiple } from '$lib/store/store';
 	import { _ } from 'svelte-i18n';
 
 	import UserLayout from './UserLayout.svelte';
+	import { kind0Events } from '$lib/store/runes.svelte';
 
 	let {
 		pubkey,
@@ -33,7 +34,7 @@
 	//kind0 表示と
 	//kind3 自分が含まれるか
 	//最新の kind1 表示
-	let kind0 = $derived($kind0Events.get(pubkey)?.event);
+	let kind0 = $derived(kind0Events.get().get(pubkey)?.event);
 
 	const profile = $derived(getProfile(kind0));
 

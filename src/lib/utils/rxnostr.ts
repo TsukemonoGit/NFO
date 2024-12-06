@@ -2,7 +2,6 @@ import { kind3Relay } from '$lib/store/constants';
 import {
 	dontCheckFollowState,
 	followStateMap,
-	kind0Events,
 	kind1Events,
 	kind3Events,
 	loading,
@@ -22,9 +21,11 @@ import {
 } from 'rx-nostr';
 import { verifier as cryptoVerifier } from 'rx-nostr-crypto';
 import { get } from 'svelte/store';
-import { Observable, scan, Subject, type OperatorFunction } from 'rxjs';
+import { Observable, scan, Subject, tap, type OperatorFunction } from 'rxjs';
 
 import { SvelteMap } from 'svelte/reactivity';
+import { kind0Events, userNameList } from '$lib/store/runes.svelte';
+import { getProfile } from './nostr';
 
 const rxNostr = createRxNostr({
 	verifier: get(verifier) ?? cryptoVerifier,
@@ -157,6 +158,7 @@ export function getRxEventsAsStream({
 			.use(chunkedReq)
 			.pipe(
 				uniq(flushes$),
+				setUserName(),
 				latestEach(({ event }) => event.pubkey),
 				scanMap() //scanArray()
 			)
@@ -200,6 +202,29 @@ export function scanMap<A extends EventPacket>(): OperatorFunction<A, SvelteMap<
 		return latestByPubkey;
 	}, new SvelteMap<string, A>());
 }
+
+// ユーザー名を設定するオペレーター
+function setUserName(): OperatorFunction<EventPacket, EventPacket> {
+	return tap((pk: EventPacket) => {
+		if (pk.event.kind === 0) {
+			const profile = getProfile(pk.event); // プロファイルを取得
+			userNameList.update((cur) => {
+				const existing = cur.get(pk.event.pubkey) || {
+					petname: undefined,
+					name: undefined,
+					display_name: undefined
+				};
+				// 現在の値をマージして更新
+				cur.set(pk.event.pubkey, {
+					...existing,
+					name: profile?.name,
+					display_name: profile?.display_name
+				});
+			});
+		}
+	});
+}
+
 // export function scanArray<A extends EventPacket>(): OperatorFunction<A, A[]> {
 // 	return scan((acc: A[], a: A) => {
 // 		// Map を使って pubkey ごとに最新のイベントを管理
@@ -254,12 +279,6 @@ export async function promisePublishSignedEvent(
 
 export const getUserEvents = async (followList: string[]) => {
 	flushes$.next(); //uniqのクリア
-	// kind3 のフィルターを作成しイベントを取得
-	const kind3Filters = followList
-		//.filter((pub) => get(kind3Events).get(pub) === undefined)
-		.map((pub) => {
-			return { authors: [pub], kinds: [3], until: now(), limit: 1 };
-		});
 
 	const kind1Filters = followList
 		//.filter((pub) => get(kind1Events).get(pub) === undefined)
@@ -267,20 +286,28 @@ export const getUserEvents = async (followList: string[]) => {
 			return { authors: [pub], kinds: [1], until: now(), limit: 1 };
 		});
 
-	if (!get(dontCheckFollowState)) {
-		// kind0 のフィルターを作成しイベントを取得
-		const kind0Filters = followList
-			//	.filter((pub) => get(kind0Events).get(pub) === undefined) //既に持ってるデータを除く
+	//
+	// kind0 のフィルターを作成しイベントを取得
+	const kind0Filters = followList
+		//	.filter((pub) => get(kind0Events).get(pub) === undefined) //既に持ってるデータを除く
 
+		.map((pub) => {
+			return { authors: [pub], kinds: [0], until: now(), limit: 1 };
+		});
+
+	if (!get(dontCheckFollowState)) {
+		// kind3 のフィルターを作成しイベントを取得
+		const kind3Filters = followList
+			//.filter((pub) => get(kind3Events).get(pub) === undefined)
 			.map((pub) => {
-				return { authors: [pub], kinds: [0], until: now(), limit: 1 };
+				return { authors: [pub], kinds: [3], until: now(), limit: 1 };
 			});
 
-		if (kind0Filters.length > 0) {
-			getRxEventsAsStream({ filters: kind0Filters }).subscribe({
+		if (kind3Filters.length > 0) {
+			getRxEventsAsStream({ filters: kind3Filters }).subscribe({
 				next: (event) => {
-					//console.log('Received event:', event);
-					kind0Events.update((events) => event);
+					//	console.log('Received event:', event);
+					kind3Events.update((events) => event);
 				},
 				error: (err) => {
 					console.error('Error:', err);
@@ -292,11 +319,13 @@ export const getUserEvents = async (followList: string[]) => {
 			});
 		}
 	}
-	if (kind3Filters.length > 0) {
-		getRxEventsAsStream({ filters: kind3Filters }).subscribe({
-			next: (event) => {
-				//	console.log('Received event:', event);
-				kind3Events.update((events) => event);
+
+	if (kind0Filters.length > 0) {
+		getRxEventsAsStream({ filters: kind0Filters }).subscribe({
+			next: (event: SvelteMap<string, EventPacket>) => {
+				//console.log('Received event:', event);
+
+				kind0Events.set(event);
 			},
 			error: (err) => {
 				console.error('Error:', err);

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { deleteList, kind3Event, loading, multiple, signer, user } from '$lib/store/store';
+	import { deleteList, userkind3, loading, multiple, signer, user } from '$lib/store/store';
 	import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
 	import { Button, Modal, uiHelpers } from 'svelte-5-ui-lib';
 	import { _ } from 'svelte-i18n';
@@ -46,7 +46,7 @@
 	const handleSureDelete = () => {
 		$newKind3Template = undefined;
 		console.log($state.snapshot($deleteList));
-		const snapshotKind3 = $state.snapshot($kind3Event);
+		const snapshotKind3 = $state.snapshot($userkind3);
 
 		const tags = snapshotKind3.tags.filter(
 			(tag) => !(tag[0] === 'p' && $deleteList.includes(tag[1]))
@@ -113,7 +113,7 @@
 					}
 				});
 				if (isSuccessRelays.length > 0) {
-					$kind3Event = resEvent;
+					$userkind3 = resEvent;
 
 					followList = resEvent.tags
 						.filter((tag) => tag[0] === 'p' && hexRegex.test(tag[1]))

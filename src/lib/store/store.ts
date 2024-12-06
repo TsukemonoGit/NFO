@@ -10,7 +10,7 @@ export const loading = writable<boolean>(false);
 export const verifier = writable<EventVerifier>();
 
 export const kind3Events = writable<SvelteMap<string, EventPacket>>(new SvelteMap()); // writable<Nostr.Event[]>([]);
-export const kind0Events = writable<SvelteMap<string, EventPacket>>(new SvelteMap()); ///writable<Nostr.Event[]>([]);
+// export const kind0Events = writable<SvelteMap<string, EventPacket>>(new SvelteMap()); ///writable<Nostr.Event[]>([]);
 export const kind1Events = writable<SvelteMap<string, EventPacket>>(new SvelteMap()); ///writable<Nostr.Event[]>([]);
 
 export const dontCheckFollowState = writable<boolean>(false);
@@ -43,4 +43,4 @@ multiple.subscribe((value) => {
 	}
 });
 
-export let kind3Event = writable<Nostr.Event>();
+export let userkind3 = writable<Nostr.Event>();

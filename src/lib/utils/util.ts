@@ -1,3 +1,4 @@
+import type { UserNames } from '$lib/store/runes.svelte';
 import type { EventPacket } from 'rx-nostr';
 
 export function datetime(unixtime: number) {
@@ -86,4 +87,14 @@ export function sortEventPackets<A extends EventPacket>(events: A[]): A[] {
 		}
 		return a.event.id.localeCompare(b.event.id);
 	});
+}
+export function getName(data: UserNames | undefined): string | undefined {
+	if (!data) return undefined;
+
+	const name = `${data.petname ? `${data.petname}📛` : ''} ${data.display_name ? `${data.display_name}` : ''}${data.name ? `@${data.name}` : ''}`;
+	if (name === '') {
+		return undefined;
+	} else {
+		return name;
+	}
 }

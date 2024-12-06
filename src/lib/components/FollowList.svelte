@@ -12,7 +12,7 @@
 	} from '$lib/utils/rxnostr';
 	import { hexRegex } from '$lib/utils/regex';
 	import FolloweeData from './FolloweeData.svelte';
-	import { kind3Event, loading, multiple, signer, user } from '$lib/store/store';
+	import { userkind3, loading, multiple, signer, user } from '$lib/store/store';
 	import type { EventParameters } from 'nostr-typedef';
 	import { getEventHash, type EventTemplate } from 'nostr-tools';
 	import { Modal, uiHelpers } from 'svelte-5-ui-lib';
@@ -21,6 +21,7 @@
 	import { toast } from '@zerodevx/svelte-toast';
 	import { _ } from 'svelte-i18n';
 	import MultipleFixedWindow from './MultipleFixedWindow.svelte';
+	import { userNameList } from '$lib/store/runes.svelte';
 
 	const kind10002filters = $derived<Nostr.Filter[]>([
 		{ authors: [$user as string], kinds: [10002], until: now(), limit: 1 }
@@ -57,21 +58,24 @@
 			$loading = false;
 			return;
 		}
-		$kind3Event = kind3;
+		$userkind3 = kind3;
 		followList = $state
-			.snapshot($kind3Event)
+			.snapshot($userkind3)
 			.tags.filter((tag) => tag[0] === 'p' && hexRegex.test(tag[1]))
 			.map((tag) => tag[1]);
+
 		getUserEvents(followList);
+
+		followList.map((pub) => {
+			const petName = $userkind3.tags.find(
+				(tag) => tag.length > 3 && tag[0] === 'p' && tag[1] === pub
+			)?.[3];
+			userNameList.update((value) =>
+				value.set(pub, { petname: petName, name: undefined, display_name: undefined })
+			);
+		});
 	});
 
-	//$derived<string[]>(
-	// 	kind3Event
-	// 		? kind3Event.tags
-	// 				.filter((tag) => tag[0] === 'p' && hexRegex.test(tag[1]))
-	// 				.map((tag) => tag[1])
-	// 		: []
-	// );
 	$loading = false;
 
 	const modalSigner = uiHelpers();
@@ -98,18 +102,18 @@
 		$newKind3Template = undefined;
 		$newKind3Signed = undefined;
 		console.log('delete', pubkey);
-		if (!kind3Event) {
+		if (!userkind3) {
 			console.log('error');
 			return;
 		}
-		const snapshotKind3 = $state.snapshot($kind3Event);
-		// let tags = kind3Event
-		// 	? structuredClone(kind3Event.tags.map((tag) => (Array.isArray(tag) ? [...tag] : tag)))
+		const snapshotKind3 = $state.snapshot($userkind3);
+		// let tags = userkind3
+		// 	? structuredClone(userkind3.tags.map((tag) => (Array.isArray(tag) ? [...tag] : tag)))
 		// 	: [];
 		// tags = tags.filter((tag) => !(tag[0] === 'p' && tag[1] === pubkey));
 		const tags = snapshotKind3.tags.filter((tag) => !(tag[0] === 'p' && tag[1] === pubkey));
-		// kind3Event
-		//		? structuredClone(kind3Event.tags.map((tag) => (Array.isArray(tag) ? [...tag] : tag)))
+		// userkind3
+		//		? structuredClone(userkind3.tags.map((tag) => (Array.isArray(tag) ? [...tag] : tag)))
 		//	: [];
 		//console.log(tags);
 		let newKind3: {
@@ -194,10 +198,10 @@
 					}
 				});
 				if (isSuccessRelays.length > 0) {
-					$kind3Event = resEvent;
+					$userkind3 = resEvent;
 
 					followList = $state
-						.snapshot($kind3Event)
+						.snapshot($userkind3)
 						.tags.filter((tag) => tag[0] === 'p' && hexRegex.test(tag[1]))
 						.map((tag) => tag[1]);
 				}
@@ -217,7 +221,7 @@
 	};
 </script>
 
-{#if !$kind3Event}
+{#if !$userkind3}
 	loading...
 {:else if followList.length === 0 && !$loading}
 	{$_('follow_zero')}

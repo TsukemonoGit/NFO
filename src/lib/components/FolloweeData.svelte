@@ -1,11 +1,23 @@
 <script lang="ts">
 	import User from './User.svelte';
 
-	import { dontCheckFollowState, followStateMap, kind1Events, multiple } from '$lib/store/store';
+	import {
+		dontCheckFollowState,
+		followStateMap,
+		kind1Events,
+		multiple,
+		userkind3
+	} from '$lib/store/store';
 	import { Button, Select, Toggle } from 'svelte-5-ui-lib';
 
 	import { CaretUpSolid, CaretDownSolid } from 'flowbite-svelte-icons';
 	import { _ } from 'svelte-i18n';
+
+	import type { SvelteMap } from 'svelte/reactivity';
+	import type { EventPacket } from 'rx-nostr';
+	import { kind0Events, userNameList, type UserNames } from '$lib/store/runes.svelte';
+	import { getProfile } from '$lib/utils/nostr';
+	import { getName } from '$lib/utils/util';
 
 	interface SortType {
 		value: string;
@@ -20,6 +32,24 @@
 		handleDelete
 	}: { followList: string[]; handleDelete: (pubkey: string) => void } = $props();
 
+	// let userNameList = $derived(getUserNameList(followList, kind0Events.get));
+	// $inspect(userNameList);
+	// function getUserNameList(followList: string[], kind0Events: SvelteMap<string, EventPacket>) {
+	// 	return followList.reduce((before, pub) => {
+	// 		const kind0 = kind0Events.get(pub)?.event;
+	// 		const petname = $userkind3.tags.find(
+	// 			(tag) => tag[0] === 'p' && tag[1] === pub && tag.length > 3
+	// 		)?.[3];
+	// 		if (kind0) {
+	// 			const profile = getProfile(kind0);
+	// 			const name = profile?.name;
+	// 			const display_name = profile?.display_name;
+	// 			return { ...before, [pub]: `${petname}${name}${display_name}` };
+	// 		} else {
+	// 			return { ...before, [pub]: `${petname}` };
+	// 		}
+	// 	}, {});
+	// }
 	// Events
 
 	// $: -> $derived/$effect
@@ -37,6 +67,7 @@
 	const sortType: SortType[] = [
 		{ value: 'default', name: $_('sortType.default') },
 		{ value: 'note', name: $_('sortType.note') },
+		{ value: 'name', name: $_('sortType.name') },
 		{ value: 'petname', name: $_('sortType.petname') }
 	];
 	if (!$dontCheckFollowState) {
@@ -85,8 +116,6 @@
 			//break;
 
 			case 'petname':
-			//ペットネーム順で並べ替え
-			case 'petname':
 				// ペットネーム順で並べ替え
 				return followList.slice().sort((a, b) => {
 					const aPetname = $followStateMap.get(a)?.petname || ''; // undefined を空文字列扱い
@@ -94,6 +123,20 @@
 					return ascending
 						? aPetname.localeCompare(bPetname) // 昇順
 						: bPetname.localeCompare(aPetname); // 降順
+				});
+			case 'name':
+				// ネーム順で並べ替え
+				return followList.slice().sort((a, b) => {
+					const adata = userNameList.get().get(a);
+					const aname = getName(adata) || '';
+
+					// undefined を空文字列扱い
+					const bdata = userNameList.get().get(b);
+					const bname = getName(bdata) || '';
+
+					return ascending
+						? aname.localeCompare(bname) // 昇順
+						: bname.localeCompare(aname); // 降順
 				});
 		}
 	});

@@ -1,13 +1,12 @@
 <script lang="ts">
-	import type { Profile } from '../../types/types';
-
-	import { dontCheckFollowState, followStateMap, kind0Events, kind1Events } from '$lib/store/store';
-	import { datetime, formatAbsoluteDate, formatRelativeDate } from '$lib/utils/util';
+	import { dontCheckFollowState, followStateMap, kind1Events } from '$lib/store/store';
+	import { datetime, formatAbsoluteDate, formatRelativeDate, getName } from '$lib/utils/util';
 	import { getProfile } from '$lib/utils/nostr';
 	import { locale } from 'svelte-i18n';
+	import { kind0Events, userNameList } from '$lib/store/runes.svelte';
 
 	let { pubkey } = $props<{ pubkey: string }>();
-	let kind0 = $derived($kind0Events.get(pubkey)?.event);
+	let kind0 = $derived(kind0Events.get().get(pubkey)?.event);
 	let isFollower = $derived($followStateMap.get(pubkey));
 	let kind1 = $derived($kind1Events.get(pubkey)?.event);
 	let petname = $derived($followStateMap.get(pubkey)?.petname);
@@ -38,7 +37,8 @@
 	</div>
 	<div class="flex flex-col">
 		<div class=" text-secondary-600">
-			{profile?.display_name ?? ''}@{profile?.name && profile.name !== '' ? profile.name : 'noname'}
+			{getName(userNameList.get().get(pubkey)) || 'undefined'}
+			<!-- {profile?.display_name ?? ''}@{profile?.name && profile.name !== '' ? profile.name : 'noname'} -->
 		</div>
 		{#if petname}
 			<span class=" font-bold"
