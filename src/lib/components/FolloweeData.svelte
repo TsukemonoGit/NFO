@@ -156,7 +156,7 @@
 			<span class="font-bold">{$_('followCount')}</span>:
 			{followList.length}
 			{#if !$dontCheckFollowState}<span class="ml-2 font-bold">{$_('mutualFollow')}🫂</span>: {followList.filter(
-					(pub) => $followStateMap.get(pub)
+					(pub) => $followStateMap.get(pub)?.follow === true
 				).length}
 				<span class="ml-2 font-bold">{$_('UnilateralFollow')}😐</span>: {followList.filter(
 					(pub) => $followStateMap.get(pub)?.follow === false
