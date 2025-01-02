@@ -41,7 +41,7 @@
 	</button> <script src="https://cdn.jsdelivr.net/npm/nostr-zap@1.1.0"></script>
 	<script
 		src="
-https://cdn.jsdelivr.net/npm/@konemono/nostr-share-component@0.2.0/dist/nostr-share-component.min.js
+https://cdn.jsdelivr.net/npm/@konemono/nostr-share-component@0.2.1/dist/nostr-share-component.min.js
 "
 	></script>
 </header>
