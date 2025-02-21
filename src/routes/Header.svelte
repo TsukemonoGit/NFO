@@ -20,7 +20,12 @@
 <header class="flex w-full flex-row-reverse items-center gap-1 px-1">
 	<button class="fill-black/80 hover:fill-secondary-600" onclick={handleClickShare}>
 		{@html shareIcon}
-	</button><nostr-share data-type="icon" icon-size="32"></nostr-share>
+	</button>
+
+	{#await import('@konemono/nostr-share-component') then}
+		<nostr-share data-type="icon" icon-size="32"></nostr-share>
+	{/await}
+
 	<a
 		aria-label="github"
 		class="w-8 fill-black/80 hover:fill-secondary-600"
@@ -39,9 +44,4 @@
 	>
 		{@html zapIcon}
 	</button> <script src="https://cdn.jsdelivr.net/npm/nostr-zap@1.1.0"></script>
-	<script
-		src="
-https://cdn.jsdelivr.net/npm/@konemono/nostr-share-component@0.2.1/dist/nostr-share-component.min.js
-"
-	></script>
 </header>
