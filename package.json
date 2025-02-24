@@ -23,7 +23,7 @@
 		"@types/qrcode": "^1.5.5",
 		"@zerodevx/svelte-toast": "^0.9.6",
 		"autoprefixer": "^10.4.20",
-		"prettier": "^3.5.1",
+		"prettier": "^3.5.2",
 		"prettier-plugin-svelte": "^3.3.3",
 		"prettier-plugin-tailwindcss": "^0.6.11",
 		"svelte": "^5.20.2",
@@ -35,7 +35,7 @@
 		"vitest": "^2.1.9"
 	},
 	"dependencies": {
-		"@konemono/nostr-share-component": "^0.3.0",
+		"@konemono/nostr-share-component": "^0.4.0",
 		"flowbite-svelte-icons": "^2.0.2",
 		"nostr-signer-connector": "^0.5.0",
 		"nostr-tools": "^2.10.4",
