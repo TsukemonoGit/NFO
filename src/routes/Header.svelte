@@ -38,10 +38,10 @@
 	</a>
 	<button
 		data-npub="npub1sjcvg64knxkrt6ev52rywzu9uzqakgy8ehhk8yezxmpewsthst6sw3jqcw"
-		data-note-id="note1l2l9065psq3qxr5dy9th5yrpfdp0aq7gfjq6l83qxd9khqm5ru3srh0j0c"
+		data-naddr="naddr1qqxnzdenxgcrqd3jx5mrjde4qgsgfvxyd2mfntp4avk29pj8pwz7pqwmyzrummmrjv3rdsuhg9mc9agrqsqqql8k3jh28x"
 		data-relays="wss://relay.damus.io,wss://relay.snort.social,wss://nostr.wine,wss://relay.nostr.band"
 		class="fill-primary-600/80 hover:fill-secondary-600"
 	>
 		{@html zapIcon}
-	</button> <script src="https://cdn.jsdelivr.net/npm/nostr-zap@1.1.0"></script>
+	</button> <script src="https://cdn.jsdelivr.net/npm/nostr-zap@latest"></script>
 </header>
