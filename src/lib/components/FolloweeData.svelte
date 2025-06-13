@@ -1,19 +1,13 @@
 <script lang="ts">
 	import User from './User.svelte';
 
-	import {
-		dontCheckFollowState,
-		followStateMap,
-		kind1Events,
-		multiple,
-		userkind3
-	} from '$lib/store/store';
+	import { dontCheckFollowState, followStateMap, kind1Events, multiple } from '$lib/store/store';
 	import { Button, Select, Toggle } from 'svelte-5-ui-lib';
 
 	import { CaretUpSolid, CaretDownSolid } from 'flowbite-svelte-icons';
 	import { t as _ } from '@konemono/svelte5-i18n';
 
-	import { kind0Events, userNameList, type UserNames } from '$lib/store/runes.svelte';
+	import { userNameList } from '$lib/store/runes.svelte';
 
 	import { getName } from '$lib/utils/util';
 
@@ -29,37 +23,6 @@
 
 		handleDelete
 	}: { followList: string[]; handleDelete: (pubkey: string) => void } = $props();
-
-	// let userNameList = $derived(getUserNameList(followList, kind0Events.get));
-	// $inspect(userNameList);
-	// function getUserNameList(followList: string[], kind0Events: SvelteMap<string, EventPacket>) {
-	// 	return followList.reduce((before, pub) => {
-	// 		const kind0 = kind0Events.get(pub)?.event;
-	// 		const petname = $userkind3.tags.find(
-	// 			(tag) => tag[0] === 'p' && tag[1] === pub && tag.length > 3
-	// 		)?.[3];
-	// 		if (kind0) {
-	// 			const profile = getProfile(kind0);
-	// 			const name = profile?.name;
-	// 			const display_name = profile?.display_name;
-	// 			return { ...before, [pub]: `${petname}${name}${display_name}` };
-	// 		} else {
-	// 			return { ...before, [pub]: `${petname}` };
-	// 		}
-	// 	}, {});
-	// }
-	// Events
-
-	// $: -> $derived/$effect
-
-	// onMount(() => {
-	// 	console.log('mount', $user, followList.length);
-	// 	if ($user) {
-	// 		getUserEvents(followList, $user);
-	// 	}
-	// });
-
-	//sort
 
 	let sortSelected: string | undefined = $state('default');
 	const sortType: SortType[] = [
