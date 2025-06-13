@@ -16,7 +16,7 @@
 	import { sineIn } from 'svelte/easing';
 	import { nip19 } from 'nostr-tools';
 	import { deleteList, multiple } from '$lib/store/store';
-	import { _ } from 'svelte-i18n';
+	import { t as _ } from '@konemono/svelte5-i18n';
 
 	import UserLayout from './UserLayout.svelte';
 	import { kind0Events } from '$lib/store/runes.svelte';
@@ -137,7 +137,7 @@
 	</div>
 </div>
 <Modal title={modalTitle} {modalStatus} {closeModal}>
-	<ModalUserDetail {pubkey} {modalTitle} />
+	<ModalUserDetail {pubkey} />
 </Modal>
 <Modal size="xs" modalStatus={modalDeleteStatus} closeModal={closeDeleteModal}>
 	<div class="text-center">

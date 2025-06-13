@@ -7,8 +7,8 @@
 	import FollowList from '$lib/components/FollowList.svelte';
 	import SignerConnector from '$lib/components/Signer/SignerConnector.svelte';
 	import { toast } from '@zerodevx/svelte-toast';
-	import { _ } from 'svelte-i18n';
-	import { writable } from 'svelte/store';
+	import { t as _ } from '@konemono/svelte5-i18n';
+
 	import { untrack } from 'svelte';
 
 	const modalExample = uiHelpers();

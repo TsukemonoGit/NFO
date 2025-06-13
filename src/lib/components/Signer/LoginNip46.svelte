@@ -4,7 +4,7 @@
 	import { Nip46RemoteSigner, type Nip46ClientMetadata } from 'nostr-signer-connector';
 	import QRCode from 'qrcode';
 	import { Input } from 'svelte-5-ui-lib';
-	let connToken = $state<string>();
+	let connToken = $state<string>('');
 	let { closeModal, saveSigner } = $props<{
 		closeModal: () => void;
 		saveSigner: boolean;
@@ -19,13 +19,7 @@
 		description: 'nostr follow organizer'
 	};
 
-	// const eventParam = {
-	// 	content: 'test',
-	// 	kind: 1,
-	// 	tags: [] as string[][],
-	// 	created_at: Date.now() / 1000
-	// };
-	let connectUri = $state<string>();
+	let connectUri = $state<string | undefined>();
 
 	//Initiated by the client
 	const onClickConnectClient = async (num: number) => {
@@ -87,13 +81,14 @@
 
 	//Initiated by remote-signer
 	const onClickConnectRemote = async () => {
+		console.log(connToken);
 		if (!connToken) {
 			return;
 		}
 
 		try {
 			const { signer: sig, session } = await Nip46RemoteSigner.connectToRemote(connToken);
-
+			console.log(sig, session);
 			// store session data to LocalStorage
 			if (saveSigner) {
 				localStorage.setItem(

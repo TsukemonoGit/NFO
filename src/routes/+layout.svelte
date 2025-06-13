@@ -20,6 +20,7 @@
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 
 	import Header from './Header.svelte';
+	import '$lib/i18n/index.ts';
 
 	let { children } = $props();
 

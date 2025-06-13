@@ -2,7 +2,7 @@
 	import { dontCheckFollowState, followStateMap, kind1Events } from '$lib/store/store';
 	import { datetime, formatAbsoluteDate, formatRelativeDate, getName } from '$lib/utils/util';
 	import { getProfile } from '$lib/utils/nostr';
-	import { locale } from 'svelte-i18n';
+	import { locale } from '@konemono/svelte5-i18n';
 	import { kind0Events, userNameList } from '$lib/store/runes.svelte';
 
 	let { pubkey } = $props<{ pubkey: string }>();

@@ -1,4 +1,12 @@
+
 {
-	"i18n-ally.localesPaths": ["src/lib/i18n", "src/lib/i18n/locales"],
-	"i18n-ally.keystyle": "flat"
+  "i18n-ally.localesPaths": ["src/lib/i18n/locales"],
+  "i18n-ally.keystyle": "nested",
+  "i18n-ally.enabledFrameworks": ["svelte"],
+  "i18n-ally.namespace": false,
+  "i18n-ally.usage.scanningIgnore": ["node_modules/**", "dist/**", ".svelte-kit/**"],
+  "i18n-ally.regex.usageMatchAppend": [
+    "\\$_\\s*\\(['\"`]({key})['\"`].*?\\)",
+    "_\\s*\\(['\"`]({key})['\"`].*?\\)"
+  ]
 }

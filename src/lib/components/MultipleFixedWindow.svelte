@@ -2,7 +2,7 @@
 	import { deleteList, userkind3, loading, multiple, signer, user } from '$lib/store/store';
 	import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
 	import { Button, Modal, uiHelpers } from 'svelte-5-ui-lib';
-	import { _ } from 'svelte-i18n';
+	import { t as _ } from '@konemono/svelte5-i18n';
 	import UserLayout from './UserLayout.svelte';
 	import { now } from 'rx-nostr';
 	import { getEventHash, type EventTemplate } from 'nostr-tools';

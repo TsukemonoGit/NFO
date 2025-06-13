@@ -4,8 +4,10 @@
 	import { followStateMap, kind3Events } from '$lib/store/store';
 	import { kind0Events } from '$lib/store/runes.svelte';
 	import { getProfile } from '$lib/utils/nostr';
-
-	let { pubkey } = $props<{ pubkey: string; modalTitle: string }>();
+	interface Props {
+		pubkey: string;
+	}
+	let { pubkey }: Props = $props();
 	let kind0 = $derived(kind0Events.get().get(pubkey)?.event);
 	let isFollower = $derived($followStateMap.get(pubkey)?.follow);
 	let petname = $derived($followStateMap.get(pubkey)?.petname);

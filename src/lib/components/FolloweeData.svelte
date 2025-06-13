@@ -11,12 +11,10 @@
 	import { Button, Select, Toggle } from 'svelte-5-ui-lib';
 
 	import { CaretUpSolid, CaretDownSolid } from 'flowbite-svelte-icons';
-	import { _ } from 'svelte-i18n';
+	import { t as _ } from '@konemono/svelte5-i18n';
 
-	import type { SvelteMap } from 'svelte/reactivity';
-	import type { EventPacket } from 'rx-nostr';
 	import { kind0Events, userNameList, type UserNames } from '$lib/store/runes.svelte';
-	import { getProfile } from '$lib/utils/nostr';
+
 	import { getName } from '$lib/utils/util';
 
 	interface SortType {

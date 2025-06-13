@@ -8,9 +8,9 @@
 	import { Nip07ExtensionSigner, type Nip07Extension } from 'nostr-signer-connector';
 	import { Button } from 'svelte-5-ui-lib';
 	import { LOGIN } from '$lib/store/constants';
-	import { _ } from 'svelte-i18n';
+	import { t as _ } from '@konemono/svelte5-i18n';
 
-	let ncrysec = $state<string>();
+	let ncrysec = $state<string>('');
 	let { closeModal, sign = false } = $props<{
 		closeModal: (ncrysec: string | undefined) => void;
 		sign?: boolean;
@@ -51,7 +51,7 @@
 {#if selectType === 'nip46'}
 	<LoginNip46 {closeModal} {saveSigner} /><!---->
 {:else if selectType === 'nip49'}
-	<LoginNcryptsec {closeModal} />
+	<LoginNcryptsec />
 
 	<!--保存ONにしていても保存されません-->
 {/if}

@@ -19,7 +19,7 @@
 	import SignerConnector from './Signer/SignerConnector.svelte';
 	import { writable } from 'svelte/store';
 	import { toast } from '@zerodevx/svelte-toast';
-	import { _ } from 'svelte-i18n';
+	import { t as _ } from '@konemono/svelte5-i18n';
 	import MultipleFixedWindow from './MultipleFixedWindow.svelte';
 	import { userNameList } from '$lib/store/runes.svelte';
 

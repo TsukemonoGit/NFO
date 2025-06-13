@@ -6,7 +6,6 @@
 
 	let ncryptsec = $state<string>('');
 	let password = $state<string>('');
-	let { closeModal } = $props<{ closeModal: (ncrysec: string) => void }>();
 
 	const handleClick = () => {
 		try {
