@@ -2,9 +2,11 @@
 	"description": "It retrieves a user's following list and displays information such as the time of their most recent post and whether or not they are following each other.\nThere is also a sorting function, so you can easily organize your following, such as people who haven't posted recently.",
 	"saveSigner": "Save your signer information (your previous signer information will be carried over when you open the side page)",
 	"dontCheckFollowState": "Don't check the follow status of people you follow",
-	"dropdownMenu.detail": "Detail",
-	"dropdownMenu.njump": "Open in njump",
-	"dropdownMenu.delete": "Unfollow",
+	"dropdownMenu": {
+		"detail": "Detail",
+		"njump": "Open in njump",
+		"delete": "Unfollow"
+	},
 	"follow_zero": "following 0 people",
 
 	"followCount": "Following count",
@@ -12,9 +14,11 @@
 	"UnilateralFollow": "Unilateral Follow",
 	"unknown": "unknown",
 	"mismatchPubkey": "The public key of the data being viewed and the signer are different.",
-	"unfollow.text": "Are you sure you want to unfollow this user?",
-	"unfollow.sure": "Yes, I'm sure",
-	"unfollow.cancel": "No, cancel",
+	"unfollow": {
+		"text": "Are you sure you want to unfollow this user?",
+		"sure": "Yes, I'm sure",
+		"cancel": "No, cancel"
+	},
 	"multiple": "Multiple Delete",
 	"sortType": {
 		"default": "Followed Order",

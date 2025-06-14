@@ -11,7 +11,7 @@
 	let kind1 = $derived($kind1Events.get(pubkey)?.event);
 	let petname = $derived($followStateMap.get(pubkey)?.petname);
 
-	const profile = $derived(getProfile(kind0));
+	let profile = $derived(getProfile(kind0));
 </script>
 
 <div class="grid w-full grid-cols-[auto_1fr] p-1">
@@ -20,7 +20,7 @@
 			<div class="absolute h-16 w-16 overflow-hidden rounded-lg border border-secondary-600">
 				{#if profile?.picture && profile?.picture !== ''}
 					<img
-						src={profile?.picture}
+						src={profile.picture}
 						alt="Avatar"
 						class="absolute overflow-hidden object-cover"
 						style="height: 100%; width: 100%; object-fit: cover; object-position: center;"
