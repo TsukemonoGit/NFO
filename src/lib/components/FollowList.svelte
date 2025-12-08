@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import * as Nostr from 'nostr-tools';
 	import { kind10002Relay } from '$lib/store/constants';
 	import { getEvent } from '$lib/utils/nostr';
-	import { now, type OkPacketAgainstEvent } from 'rx-nostr';
+	import { now } from 'rx-nostr';
 	import {
 		getRxEvent,
 		getUserEvents,
@@ -32,6 +32,10 @@
 
 	let followList = $state<string[]>([]);
 
+	onDestroy(() => {
+		console.log('destroy');
+		$loading = false;
+	});
 	onMount(async () => {
 		//デフォリレーを取る
 		$loading = true;
