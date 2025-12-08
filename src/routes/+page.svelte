@@ -50,22 +50,23 @@
 	};
 
 	const toHex = (npub: string | undefined): string | undefined => {
-		npub = npub?.trim();
-		if (npub && npubRegex.test(npub)) {
-			try {
-				return nip19.decode(npub).data as string;
-			} catch (error) {
-				console.log(error);
-			}
+		const trimmed = npub?.trim();
+		if (!trimmed || !npubRegex.test(trimmed)) return undefined;
+
+		try {
+			return nip19.decode(trimmed).data as string;
+		} catch {
+			return undefined;
 		}
 	};
+
 	$effect(() => {
-		if (encodedPub) {
-			untrack(() => {
-				$user = toHex(encodedPub);
-			});
-		}
+		const pub = encodedPub;
+		untrack(() => {
+			$user = toHex(pub);
+		});
 	});
+	$inspect($user);
 </script>
 
 <svelte:head>
