@@ -1,3 +1,7 @@
+> [!NOTE]
+> This repository is archived and no longer actively maintained.
+> Please use Nostr Follow Organizer 2 instead: https://github.com/TsukemonoGit/NFO2
+
 # Nostr Follow Organizer
 https://tsukemonogit.github.io/NFO/
 
